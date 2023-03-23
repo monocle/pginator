@@ -1,0 +1,14 @@
+flask
+flask-migrate
+flask-sqlalchemy
+psycopg[binary,pool]
+
+black
+isort
+mypy
+pytest
+pytest-cov
+
+pip-tools
+python-dotenv
+watchdog

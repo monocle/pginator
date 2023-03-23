@@ -1,0 +1,49 @@
+version: "3"
+name: pginator
+services:
+  frontend:
+    build:
+      context: frontend
+      target: development
+    image: pginator-frontend
+    restart: always
+    ports:
+      - 5173:5173
+    volumes:
+      - ./frontend:/frontend
+      - node-modules:/frontend/node_modules
+
+  backend: 
+    build:
+      context: backend
+      target: build-image
+    image: pginator-backend
+    restart: always
+    env_file: .env
+    ports:
+      - 5002:5000
+      - 5678:5678
+    volumes:
+      - .:/home/appuser/src
+    depends_on:
+      - database
+    networks:
+      - pginator
+
+  database:
+    image: postgres:15.2-alpine3.17
+    env_file: .env
+    restart: always
+    ports:
+      - ${POSTGRES_PORT}:${POSTGRES_PORT}
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    networks:
+      - pginator
+
+networks:
+  pginator:
+
+volumes:
+  postgres-data:
+  node-modules:
