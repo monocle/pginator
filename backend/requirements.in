@@ -2,6 +2,7 @@ flask
 flask-migrate
 flask-sqlalchemy
 psycopg[binary,pool]
+pydantic
 
 black
 isort
