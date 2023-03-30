@@ -1,5 +1,5 @@
-from flask import Blueprint, request
 from app.models.table import Table
+from flask import Blueprint, request
 
 tables_bp = Blueprint("tables", __name__, url_prefix="/tables")
 
@@ -37,8 +37,8 @@ def create_table():
 def update_table():
     table = Table(request.json, is_update_request=True)
 
-    if table.valid:
-        return table.update(), 200
+    if table.valid and table.update():
+        return "", 204
 
     return {"error": table.errors}, 400
 

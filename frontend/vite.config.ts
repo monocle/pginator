@@ -11,5 +11,11 @@ export default defineConfig({
     host: true,
     strictPort: true,
     port: 5173,
+    proxy: {
+      '/tables': {
+        target: 'http://backend:5000',
+        changeOrigin: false,
+      }
+    }
   }
 })

@@ -1,8 +1,8 @@
 FROM node:lts-alpine3.17 as development
 
-WORKDIR /frontend
+WORKDIR /src/frontend
 
-COPY package* /frontend/
+COPY package* /src/frontend/
 
 RUN npm ci
 

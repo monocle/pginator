@@ -1,11 +1,12 @@
-from typing import ContextManager, Callable, Iterator
-from mypy_extensions import Arg
 from contextlib import contextmanager
+from typing import Callable, ContextManager, Iterator
+
 import pytest
-from psycopg.sql import SQL, Identifier
-from flask.testing import FlaskClient
 from app.create_app import create_app
 from app.db import DB
+from flask.testing import FlaskClient
+from mypy_extensions import Arg
+from psycopg.sql import SQL, Identifier
 
 TABLE_NAME = "foo"
 
@@ -125,22 +126,13 @@ def test_create_endpoint(
             {
                 "table_name": "foo",
                 "action": "add",
-                "col_name": "new_col",
-                "data_type": "circle",
+                "remaining_sql": "new_col circle",
             },
-            200,
-            {
-                "table_name": "foo",
-                "columns": [
-                    {"name": "address", "data_type": "text"},
-                    {"name": "id", "data_type": "integer"},
-                    {"name": "new_col", "data_type": "circle"},
-                    {"name": "num", "data_type": "integer"},
-                ],
-            },
+            204,
+            None,
         ),
         (
-            {"action": "add", "col_name": "new_col", "data_type": "circle"},
+            {"action": "add", "remaining_sql": "new_col circle"},
             400,
             {
                 "error": [
@@ -153,7 +145,7 @@ def test_create_endpoint(
             },
         ),
         (
-            {"table_name": "foo", "action": "nope", "col_name": "n", "data_type": "c"},
+            {"table_name": "foo", "action": "nope", "remaining_sql": "n c"},
             400,
             {
                 "error": 'syntax error at or near "nope"\nLINE 1: ALTER TABLE "foo" nope n c\n                          ^'

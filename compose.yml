@@ -10,9 +10,11 @@ services:
     ports:
       - 5173:5173
     volumes:
-      - ./frontend:/frontend
-      - node-modules:/frontend/node_modules
-
+      - .:/src
+      - node-modules:/src/frontend/node_modules
+    networks:
+      - pginator
+      
   backend: 
     build:
       context: backend

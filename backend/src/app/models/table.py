@@ -1,7 +1,7 @@
-from psycopg.sql import SQL, Identifier
-from pydantic import BaseModel, ValidationError, conlist
 from app.db import DB
 from psycopg.rows import DictRow
+from psycopg.sql import SQL, Identifier
+from pydantic import BaseModel, ValidationError, conlist
 
 
 def fetch_sql() -> str:
@@ -10,11 +10,10 @@ def fetch_sql() -> str:
     FROM (
         SELECT t.table_name, json_agg(json_build_object('name', c.column_name, 'data_type', c.data_type) ORDER  BY c.column_name) AS columns
         FROM information_schema.tables t
-        INNER JOIN information_schema.columns c
+        LEFT JOIN information_schema.columns c
         ON t.table_name = c.table_name
         WHERE t.table_schema = 'public'
         AND t.table_type = 'BASE TABLE'
-        AND c.table_schema = 'public'
         GROUP BY t.table_name
     ) AS tables
     WHERE tables.table_name=(%(name)s) OR %(name)s = ''
@@ -34,8 +33,7 @@ class TableCreateRequest(BaseModel):
 class TableUpdateRequest(BaseModel):
     table_name: str
     action: str
-    col_name: str
-    data_type: str
+    remaining_sql: str
 
 
 class Table:
@@ -80,26 +78,22 @@ class Table:
 
         return None
 
-    def update(self) -> DictRow | None:
+    def update(self) -> bool:
         if self.valid:
             action = self.request_dict["action"]
-            col_name = self.request_dict["col_name"]
-            data_type = self.request_dict["data_type"]
-            base_sql_str = "ALTER TABLE {name} {action} {col_name}"
-
-            if action.lower() != "drop":
-                base_sql_str += " {data_type}"
+            remaining_sql = self.request_dict["remaining_sql"]
+            base_sql_str = "ALTER TABLE {name} {action} {remaining_sql}"
 
             sql = SQL(base_sql_str).format(
                 name=Identifier(self.name),
                 action=SQL(action),
-                col_name=SQL(col_name),
-                data_type=SQL(data_type),
+                remaining_sql=SQL(remaining_sql),
             )
-            DB().execute(sql)
-            return Table.find(self.name)
 
-        return None
+            DB().execute(sql)
+            return True
+
+        return False
 
     @property
     def valid(self) -> bool:

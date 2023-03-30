@@ -44,6 +44,9 @@ backend_shell:
 backend_test:
 	docker exec -it $(PROJ_NAME)-$(BACKEND)-1 python scripts/auto_run_tests.py
 
+backend_test_cov:
+	docker exec -it $(PROJ_NAME)-$(BACKEND)-1 pytest --cov=backend/src/app --cov-report=term-missing 
+
 db_create:
 	docker exec $(PROJ_NAME)-$(BACKEND)-1 python scripts/db_create.py
 
@@ -51,10 +54,17 @@ db_drop:
 	docker exec $(PROJ_NAME)-$(BACKEND)-1 python scripts/db_drop.py
 
 db_shell:
-	docker exec -it $(PROJ_NAME)-$(DATABASE)-1 psql -U $(POSTGRES_USER)
+	docker exec -it $(PROJ_NAME)-$(DATABASE)-1 psql -E -U $(POSTGRES_USER)
 
 frontend_logs:
 	docker compose logs -f $(FRONTEND)
+
+frontend_shell:
+	docker exec -it $(PROJ_NAME)-$(FRONTEND)-1 /bin/sh
+
+frontend_test:
+	docker exec -it $(PROJ_NAME)-$(FRONTEND)-1 npm run test
+
 
 list:
 	@echo

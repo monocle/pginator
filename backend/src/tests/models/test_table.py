@@ -1,9 +1,10 @@
 from typing import Iterator
+
 import pytest
-from flask import Flask
 from app.create_app import create_app
-from app.models.table import Table
 from app.db import DB
+from app.models.table import Table
+from flask import Flask
 
 
 @pytest.fixture
@@ -49,42 +50,36 @@ def test_create(app: Flask, req_dict: dict, res_dict: dict):
 
 
 @pytest.mark.parametrize(
-    "req_dict, res_dict",
+    "req_dict, res",
     [
         (
             {
                 "table_name": "bar",
                 "action": "add",
-                "col_name": "new_col",
-                "data_type": "circle",
+                "remaining_sql": "new_col circle",
             },
-            {
-                "table_name": "bar",
-                "columns": [
-                    {"name": "col1", "data_type": "text"},
-                    {"name": "col2", "data_type": "text"},
-                    {"name": "new_col", "data_type": "circle"},
-                ],
-            },
+            True,
         ),
         (
             {
                 "table_name": "bar",
                 "action": "drop",
-                "col_name": "col1",
-                "data_type": "noop",
+                "remaining_sql": "col1",
             },
+            True,
+        ),
+        ({}, False),
+        (
             {
                 "table_name": "bar",
-                "columns": [
-                    {"name": "col2", "data_type": "text"},
-                ],
+                "action": "drop",
+                "remaining_sql": "col1, drop col2",
             },
+            True,
         ),
-        ({}, None),
     ],
 )
-def test_update(app: Flask, req_dict: dict, res_dict: dict):
+def test_update(app: Flask, req_dict: dict, res: bool):
     bar_table_dict = {
         "table_name": "bar",
         "columns": [
@@ -96,7 +91,7 @@ def test_update(app: Flask, req_dict: dict, res_dict: dict):
         Table(bar_table_dict).create()
         table = Table(req_dict, is_update_request=True)
 
-        assert table.update() == res_dict
+        assert table.update() == res
 
 
 @pytest.mark.parametrize(
@@ -180,9 +175,9 @@ def test_validation_for_create(app: Flask, req_dict: dict, expected_errors: list
 @pytest.mark.parametrize(
     "req_dict, expected_errors",
     [
-        ({"table_name": "f", "action": "add", "col_name": "c", "data_type": "t"}, ()),
+        ({"table_name": "f", "action": "add", "remaining_sql": "c t"}, ()),
         (
-            {"action": "add", "col_name": "c", "data_type": "t"},
+            {"action": "add", "remaining_sql": "c t"},
             (
                 {
                     "loc": ("table_name",),
@@ -192,11 +187,11 @@ def test_validation_for_create(app: Flask, req_dict: dict, expected_errors: list
             ),
         ),
         (
-            {"table_name": "f", "action": "add", "data_type": "t"},
+            {"table_name": "f", "action": "add"},
             (
                 (
                     {
-                        "loc": ("col_name",),
+                        "loc": ("remaining_sql",),
                         "msg": "field required",
                         "type": "value_error.missing",
                     },
@@ -204,20 +199,10 @@ def test_validation_for_create(app: Flask, req_dict: dict, expected_errors: list
             ),
         ),
         (
-            {"table_name": "f", "col_name": "c", "data_type": "t"},
+            {"table_name": "f", "remaining_sql": "c t"},
             (
                 {
                     "loc": ("action",),
-                    "msg": "field required",
-                    "type": "value_error.missing",
-                },
-            ),
-        ),
-        (
-            {"table_name": "f", "action": "add", "col_name": "c"},
-            (
-                {
-                    "loc": ("data_type",),
                     "msg": "field required",
                     "type": "value_error.missing",
                 },
@@ -237,12 +222,7 @@ def test_validation_for_create(app: Flask, req_dict: dict, expected_errors: list
                     "type": "value_error.missing",
                 },
                 {
-                    "loc": ("col_name",),
-                    "msg": "field required",
-                    "type": "value_error.missing",
-                },
-                {
-                    "loc": ("data_type",),
+                    "loc": ("remaining_sql",),
                     "msg": "field required",
                     "type": "value_error.missing",
                 },
