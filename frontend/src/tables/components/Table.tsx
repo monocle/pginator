@@ -1,6 +1,6 @@
 import { useContext } from "react";
 import { ServerTable } from "../../interface";
-import ModalContext from "../../common/modalContext";
+import ModalContext from "../../common/outletContext";
 import { useDeleteTable } from "../useTablesApi";
 import AlterTableForm from "./AlterTableForm";
 import Button from "../../common/components/Button";
@@ -12,16 +12,16 @@ interface Props {
 }
 
 export default function Table({ table }: Props) {
-  const { setModal } = useContext(ModalContext);
+  const { setOutlet } = useContext(ModalContext);
   const { request, deleteTable } = useDeleteTable();
 
   return (
     <li>
       <div>
-        {table.table_name}
+        <p>{table.table_name}</p>
         <Button
           text="Edit"
-          onClick={() => setModal(<AlterTableForm table={table} />)}
+          onClick={() => setOutlet(<AlterTableForm table={table} />)}
         />
         <Button
           text="X"

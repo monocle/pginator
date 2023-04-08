@@ -1,6 +1,6 @@
 import { useContext, useState, useEffect } from "react";
 import { ServerTable, ServerTableColumn, TableAction } from "../../interface";
-import ModalContext from "../../common/modalContext";
+import OutletContext from "../../common/outletContext";
 import { tableActions } from "../../common/postgres";
 import useForm from "../../common/form/useForm";
 import { isValidTableAction } from "../../common/validators";
@@ -22,7 +22,7 @@ interface Props {
 }
 
 export default function AlterTableForm({ table }: Props) {
-  const { exitModal } = useContext(ModalContext);
+  const { resetOutlet } = useContext(OutletContext);
   const { request, updateTable } = useUpdateTable();
   const form = useForm();
   const sqlAction = form.useInput(isValidTableAction);
@@ -114,7 +114,7 @@ export default function AlterTableForm({ table }: Props) {
           disabled={request.isLoading || !form.isValid()}
         />
 
-        <Button text="Cancel" onClick={exitModal} />
+        <Button text="Cancel" onClick={resetOutlet} />
         <ErrorMessage errorResponse={request.error} />
       </form>
     </div>

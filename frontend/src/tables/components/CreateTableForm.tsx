@@ -1,7 +1,7 @@
 import { useContext, useState, useEffect } from "react";
 import { ServerTable, ServerTableColumn } from "../../interface";
 import { useCreateTable } from "../useTablesApi";
-import ModalContext from "../../common/modalContext";
+import ModalContext from "../../common/outletContext";
 import useForm from "../../common/form/useForm";
 import { isValidTableName } from "../../common/validators";
 import Input from "../../common/components/Input";
@@ -15,7 +15,7 @@ interface Props {
 }
 
 export default function CreatTableForm({ tables }: Props) {
-  const { exitModal } = useContext(ModalContext);
+  const { resetOutlet } = useContext(ModalContext);
   const { request, createTable } = useCreateTable();
   const [columns, setColumns] = useState<ServerTableColumn[]>([]);
   const form = useForm();
@@ -34,16 +34,20 @@ export default function CreatTableForm({ tables }: Props) {
 
   useEffect(() => {
     if (request.isSuccess) {
-      exitModal();
+      resetOutlet();
     }
   });
 
   return (
     <div>
       <h2>Create A New Table</h2>
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={handleSubmit} className="rounded-lg bg-gray-900 p-8">
         <fieldset>
-          <Input labelText="Table Name" {...tableName.inputProps} />
+          <Input
+            labelText="Table Name"
+            {...tableName.inputProps}
+            className="rounded-md border border-gray-700 bg-gray-800 px-3 py-2 text-gray-100 focus:border-indigo-500 focus:outline-none"
+          />
         </fieldset>
 
         <NewColumnFields
@@ -65,9 +69,10 @@ export default function CreatTableForm({ tables }: Props) {
           disabled={
             request.isLoading || (!form.isValid() && columns.length > 0)
           }
+          isLoading={request.isLoading}
         />
 
-        <Button text="Cancel" onClick={exitModal} />
+        <Button text="Cancel" onClick={resetOutlet} />
         <ErrorMessage errorResponse={request.error} />
       </form>
     </div>

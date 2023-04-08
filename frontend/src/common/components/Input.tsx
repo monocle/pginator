@@ -11,6 +11,7 @@ interface Props {
   isValid: boolean;
   errorMessage: string;
   onChange: (value: string) => void;
+  [x: string]: any;
 }
 
 let idNum = 0;
@@ -23,11 +24,12 @@ export default function Input({
   isValid,
   errorMessage,
   onChange = () => {},
+  ...rest
 }: Props) {
   const inputId = "input-error-" + idNum++;
 
   return (
-    <div>
+    <div {...rest}>
       <label>
         {labelText}
         <input

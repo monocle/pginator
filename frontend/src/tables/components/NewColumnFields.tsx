@@ -51,7 +51,7 @@ export default function ColumnFormFields({
 
   return (
     <fieldset>
-      <Input labelText="Column Name" {...columnName.inputProps} />
+      <Input labelText="Column Name" {...columnName.inputProps} className="" />
 
       <SelectInput
         prompt="Select A Data Type"
@@ -60,7 +60,11 @@ export default function ColumnFormFields({
         onChange={handleSelectedTypeChange}
       />
 
-      <Input labelText="Column Data Type" {...columnType.inputProps} />
+      <Input
+        labelText="Column Data Type"
+        {...columnType.inputProps}
+        className=""
+      />
 
       <Button
         text="Add Column"
