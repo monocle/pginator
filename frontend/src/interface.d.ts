@@ -69,4 +69,11 @@ export interface Form {
   reset: () => void;
 }
 
-export type TableAction = typeof tableActions[number];
+export type TableAction = (typeof tableActions)[number];
+
+export type ButtonStyle =
+  | "primary"
+  | "secondary"
+  | "danger"
+  | "disabled"
+  | "loading";

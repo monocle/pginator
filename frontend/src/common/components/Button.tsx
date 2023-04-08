@@ -1,8 +1,9 @@
 import React from "react";
+import { ButtonStyle } from "../../interface";
 
 function Spinner() {
   return (
-    <svg className="animate-spin h-5 w-5 mr-3 ..." viewBox="0 0 24 24">
+    <svg className="... mr-3 h-5 w-5 animate-spin" viewBox="0 0 24 24">
       <circle
         className="opacity-25"
         cx="12"
@@ -26,7 +27,7 @@ type ButtonProps = {
   disabled?: boolean;
   className?: string;
   type?: "button" | "submit" | "reset";
-  style?: "primary" | "secondary" | "danger" | "disabled" | "loading";
+  style?: ButtonStyle;
   isLoading?: boolean;
   [x: string]: any;
 };
@@ -49,10 +50,10 @@ export default function Button({
       buttonStyle += " bg-blue-500 text-white";
       break;
     case "secondary":
-      buttonStyle += " bg-gray-500 text-white";
+      buttonStyle += " bg-gray-700 hover:bg-gray-600 text-white";
       break;
     case "danger":
-      buttonStyle += " bg-red-500 text-white";
+      buttonStyle += " bg-red-600 hover:bg-red-500 text-white";
       break;
     case "disabled":
       buttonStyle += " bg-gray-300 text-gray-600";

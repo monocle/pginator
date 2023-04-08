@@ -13,12 +13,14 @@ interface Props {
   columns: ServerTableColumn[];
   validateColumns: ServerTableColumn[];
   setColumns: (columns: ServerTableColumn[]) => void;
+  [x: string]: any;
 }
 
 export default function ColumnFormFields({
   columns,
   validateColumns,
   setColumns,
+  ...rest
 }: Props) {
   const optionForManualType = "Type in a data type";
   const form = useForm();
@@ -50,25 +52,32 @@ export default function ColumnFormFields({
   };
 
   return (
-    <fieldset>
-      <Input labelText="Column Name" {...columnName.inputProps} className="" />
-
-      <SelectInput
-        prompt="Select A Data Type"
-        value={selectedDataType.value}
-        options={[optionForManualType].concat(columnDataTypes)}
-        onChange={handleSelectedTypeChange}
-      />
-
+    <fieldset {...rest}>
       <Input
-        labelText="Column Data Type"
-        {...columnType.inputProps}
-        className=""
+        labelText="Column Name"
+        className="mb-2"
+        {...columnName.inputProps}
       />
+
+      <fieldset className="mb-2">
+        <SelectInput
+          labelText="Colum Data Type"
+          prompt="Select A Data Type"
+          className="mb-2"
+          value={selectedDataType.value}
+          options={[optionForManualType].concat(columnDataTypes)}
+          onChange={handleSelectedTypeChange}
+        />
+
+        <Input
+          labelText="Modify the data type if needed below:"
+          className="mb-2"
+          {...columnType.inputProps}
+        />
+      </fieldset>
 
       <Button
         text="Add Column"
-        type="button"
         onClick={handleAddColumn}
         disabled={
           !columnName.isValid ||

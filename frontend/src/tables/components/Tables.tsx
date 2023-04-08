@@ -17,13 +17,16 @@ export default function Tables() {
 
   if (!data) return null;
   return (
-    <div className="py-8">
-      <h2 className="mb-4 text-2xl font-bold">Tables</h2>
-      <div className="mb-4 flex items-center justify-between">
-        <Button
-          text="Add Table"
-          onClick={() => setOutlet(<CreateTableForm tables={data.tables} />)}
-        />
+    <div>
+      <div className="mb-4 flex gap-4">
+        <h2 className="heading-2">Tables</h2>
+        <div>
+          <Button
+            text="+"
+            className="px-2 text-sm"
+            onClick={() => setOutlet(<CreateTableForm tables={data.tables} />)}
+          />
+        </div>
       </div>
       <ul className="grid list-none grid-cols-1">
         {data.tables.map((table) => (

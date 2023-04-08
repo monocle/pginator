@@ -5,3 +5,9 @@
 :root {
   color-scheme: light dark;
 }
+
+@layer components {
+  .heading-2 {
+    @apply text-2xl font-bold
+  }
+}

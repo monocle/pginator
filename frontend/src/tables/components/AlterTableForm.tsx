@@ -71,19 +71,20 @@ export default function AlterTableForm({ table }: Props) {
 
   useEffect(() => {
     if (request.isSuccess) {
-      exitModal();
+      resetOutlet();
     }
   });
 
   return (
     <div>
-      <h2>Editing {table.table_name}</h2>
+      <h2 className="heading-2">Editing {table.table_name}</h2>
       <h3>Existing Columns</h3>
       <Columns columns={table.columns} />
 
       <form onSubmit={handleSubmit}>
         <fieldset>
           <SelectInput
+            labelText="Alter Action"
             prompt="Select An Action"
             options={tableActions}
             {...sqlAction.inputProps}

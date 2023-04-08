@@ -18,7 +18,11 @@ export default function ColumnsSQL({ columns, action, onRemoveColumn }: Props) {
             {column.name} {column.data_type}
             {!(i === arr.length - 1) && ", "}{" "}
           </code>
-          <Button text="X" onClick={() => onRemoveColumn(column.name)} />
+          <Button
+            text="X"
+            style="danger"
+            onClick={() => onRemoveColumn(column.name)}
+          />
         </div>
       ))}
     </>

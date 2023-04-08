@@ -1,4 +1,4 @@
-import { useContext, useState, useEffect } from "react";
+import React, { useContext, useState, useEffect } from "react";
 import { ServerTable, ServerTableColumn } from "../../interface";
 import { useCreateTable } from "../useTablesApi";
 import ModalContext from "../../common/outletContext";
@@ -40,27 +40,29 @@ export default function CreatTableForm({ tables }: Props) {
 
   return (
     <div>
-      <h2>Create A New Table</h2>
-      <form onSubmit={handleSubmit} className="rounded-lg bg-gray-900 p-8">
-        <fieldset>
-          <Input
-            labelText="Table Name"
-            {...tableName.inputProps}
-            className="rounded-md border border-gray-700 bg-gray-800 px-3 py-2 text-gray-100 focus:border-indigo-500 focus:outline-none"
-          />
-        </fieldset>
+      <h2 className="heading-2">Create A New Table</h2>
+      <form onSubmit={handleSubmit} className="rounded-lg bg-gray-900 p-4">
+        <div className="flex flex-wrap justify-between">
+          <div className="mb-4 md:w-3/5">
+            <Input
+              labelText="Table Name"
+              className="mb-4"
+              {...tableName.inputProps}
+            />
 
-        <NewColumnFields
-          columns={columns}
-          validateColumns={columns}
-          setColumns={setColumns}
-        />
+            <NewColumnFields
+              columns={columns}
+              validateColumns={columns}
+              setColumns={setColumns}
+            />
+          </div>
 
-        <div>
-          <h3>SQL Statement</h3>
-          <code>CREATE TABLE {tableName.value} (</code>
-          <ColumnsSQL columns={columns} onRemoveColumn={handleRemoveColumn} />
-          <code>);</code>
+          <div className="mb-4 pl-4 md:w-2/5">
+            <h3 className="text-xl font-bold">SQL Statement</h3>
+            <code>CREATE TABLE {tableName.value} (</code>
+            <ColumnsSQL columns={columns} onRemoveColumn={handleRemoveColumn} />
+            <code>);</code>
+          </div>
         </div>
 
         <Button
@@ -72,7 +74,7 @@ export default function CreatTableForm({ tables }: Props) {
           isLoading={request.isLoading}
         />
 
-        <Button text="Cancel" onClick={resetOutlet} />
+        <Button text="Cancel" style="danger" onClick={resetOutlet} />
         <ErrorMessage errorResponse={request.error} />
       </form>
     </div>
