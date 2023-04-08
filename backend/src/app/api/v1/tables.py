@@ -1,7 +1,7 @@
 from app.models.table import Table
 from flask import Blueprint, request
 
-tables_bp = Blueprint("tables", __name__, url_prefix="/tables")
+tables_bp = Blueprint("tables", __name__, url_prefix="/api/v1/tables")
 
 
 # Just forward all PostgreSQL errors

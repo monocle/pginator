@@ -1,22 +1,14 @@
 from typing import Iterator
 
 import pytest
-from app.create_app import create_app
-from app.db import DB
 from app.models.table import Table
 from flask import Flask
+from tests.fixtures import app_factory
 
 
 @pytest.fixture
-def app() -> Iterator[Flask]:
-    app = create_app(testing=True)
-    db = DB(app)
-    db.drop_all_tables()
-
-    try:
-        yield app
-    finally:
-        db.drop_all_tables()
+def app(app_factory) -> Iterator[Flask]:
+    return app_factory()
 
 
 @pytest.mark.parametrize(

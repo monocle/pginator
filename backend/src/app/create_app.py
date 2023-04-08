@@ -1,6 +1,7 @@
 from os import environ
+
+from app.api.v1.tables import tables_bp
 from flask import Flask
-from app.tables import tables_bp
 
 
 def make_db_uri(testing: bool) -> str:

@@ -1,10 +1,11 @@
 from typing import List, Optional
+
 import psycopg as pg
+from flask import Flask, current_app
+from psycopg.abc import Params, Query
 from psycopg.connection import Connection
 from psycopg.cursor import Cursor
-from psycopg.rows import dict_row, DictRow, TupleRow
-from psycopg.abc import Query, Params
-from flask import Flask, current_app
+from psycopg.rows import DictRow, TupleRow, dict_row
 
 
 class DB:
@@ -20,7 +21,7 @@ class DB:
             with conn.cursor(row_factory=dict_row) as cursor:
                 return cursor.execute(sql, params)
 
-    def fetch_all(self, sql: Query, params: Params | None) -> List[DictRow]:
+    def fetch_all(self, sql: Query, params: Params | None = None) -> List[DictRow]:
         with self.connect() as conn:
             with conn.cursor(row_factory=dict_row) as cursor:
                 return cursor.execute(sql, params).fetchall()
