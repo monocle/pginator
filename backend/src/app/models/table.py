@@ -1,7 +1,14 @@
 from app.db import DB
 from psycopg.rows import DictRow
 from psycopg.sql import SQL, Identifier
-from pydantic import BaseModel, ValidationError, conlist
+from pydantic import (
+    BaseModel,
+    Field,
+    NonNegativeInt,
+    PositiveInt,
+    ValidationError,
+    conlist,
+)
 
 
 def fetch_sql() -> str:
@@ -15,6 +22,9 @@ def fetch_sql() -> str:
         WHERE t.table_schema = 'public'
         AND t.table_type = 'BASE TABLE'
         GROUP BY t.table_name
+        ORDER BY t.table_name ASC
+        LIMIT %(limit)s
+        OFFSET %(offset)s
     ) AS tables
     WHERE tables.table_name=(%(name)s) OR %(name)s = ''
     """
@@ -36,14 +46,21 @@ class TableUpdateRequest(BaseModel):
     remaining_sql: str
 
 
+class QueryParams(BaseModel):
+    limit: PositiveInt = Field(default=10)
+    offset: NonNegativeInt = Field(default=0)
+
+
 class Table:
     @staticmethod
-    def all() -> list[DictRow]:
-        return DB().fetch_all(fetch_sql(), {"name": ""})
+    def all(query: dict | None = None) -> list[DictRow]:
+        params = QueryParams(**(query or {}))
+        return DB().fetch_all(fetch_sql(), {"name": "", **params.dict()})
 
     @staticmethod
     def find(table_name: str) -> DictRow | None:
-        return DB().fetch_one(fetch_sql(), {"name": table_name})
+        params = QueryParams()
+        return DB().fetch_one(fetch_sql(), {"name": table_name, **params.dict()})
 
     @staticmethod
     def drop(table_name: str) -> None:
@@ -56,11 +73,14 @@ class Table:
         self._is_update_request = is_update_request
         self._errors = []
 
+        self.validate()
+
+    def validate(self):
         try:
-            if is_update_request:
-                self.request = TableUpdateRequest(**request_dict)
+            if self._is_update_request:
+                self.request = TableUpdateRequest(**self.request_dict)
             else:
-                self.request = TableCreateRequest(**request_dict)
+                self.request = TableCreateRequest(**self.request_dict)
         except ValidationError as e:
             self._errors = e.errors()
 

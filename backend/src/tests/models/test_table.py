@@ -12,6 +12,26 @@ def app(app_factory) -> Iterator[Flask]:
 
 
 @pytest.mark.parametrize(
+    "params, expected_len, expected_table_name",
+    [
+        (None, 10, "table-00"),
+        ({"limit": 3}, 3, "table-00"),
+        ({"limit": 1, "offset": 2}, 1, "table-02"),
+    ],
+)
+def test_table_all_query_params(app_factory, params, expected_len, expected_table_name):
+    sql = " ".join(
+        [f'CREATE TABLE "table-{str(i).zfill(2)}" (value text);' for i in range(11)]
+    )
+    app = app_factory(sql)
+
+    with app.app_context():
+        tables = Table.all(params)
+        assert len(tables) == expected_len
+        assert tables[0]["table_name"] == expected_table_name
+
+
+@pytest.mark.parametrize(
     "req_dict, res_dict",
     [
         (
