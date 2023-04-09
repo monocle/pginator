@@ -9,6 +9,7 @@ isort
 mypy
 pytest
 pytest-cov
+faker
 
 pip-tools
 python-dotenv
