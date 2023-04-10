@@ -1,6 +1,8 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { ErrorResponse } from "./interface";
 
+const apiPrefix = "api/v1/";
+
 type HttpMethod = "GET" | "POST" | "PUT" | "DELETE";
 type ApiPath = "tables" | `tables/${string}`;
 type QueryKey = [string, ApiPath, HttpMethod?, Object?];
@@ -13,7 +15,7 @@ async function apiQuery({ queryKey }: { queryKey: QueryKey }) {
   if (!init.headers) init.headers = { "Content-Type": "application/json" };
   if (body) init.body = JSON.stringify(body);
 
-  return fetch(path, init).then(async (res) => {
+  return fetch(apiPrefix + path, init).then(async (res) => {
     if (res.status >= 500)
       throw new Error("There was a problem with the server.");
     if (!res.ok) throw await res.json();
