@@ -45,6 +45,7 @@ class TableCreateColumn(BaseModel):
 class TableCreateRequest(BaseModel):
     table_name: str
     columns: conlist(item_type=TableCreateColumn, min_items=1)  # type: ignore
+    create_id: bool = Field(default=False)
 
 
 class TableUpdateRequest(BaseModel):
@@ -90,14 +91,19 @@ class Table:
             self._errors = e.errors()
 
     def create(self) -> DictRow | None:
-        if self.valid:
-            columns = self.request_dict["columns"]
+        if self.valid and type(self.request) == TableCreateRequest:
+            id_sql = SQL("id serial PRIMARY KEY")
             columns_sql = SQL(", ").join(
                 SQL("{} {}").format(Identifier(col["name"]), SQL(col["data_type"]))
-                for col in columns
+                for col in self.request_dict["columns"]
             )
+
+            if self.request.create_id:
+                columns_sql = SQL(", ").join([id_sql, columns_sql])
+
             sql = SQL("CREATE TABLE {} ({})").format(
-                Identifier(self.request.table_name), columns_sql
+                Identifier(self.request.table_name),
+                columns_sql,
             )
 
             DB().execute(sql)

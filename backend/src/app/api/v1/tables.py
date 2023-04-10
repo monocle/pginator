@@ -28,7 +28,7 @@ def create_table():
     table = Table(request.json)
 
     if table.valid:
-        return table.create(), 201
+        return table.create() or "", 201
 
     return {"error": table.errors}, 400
 

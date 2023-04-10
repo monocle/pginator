@@ -95,7 +95,7 @@ def test_create_endpoint(
     expected_status_code: int,
     expected_response: dict,
 ):
-    client = client_factory(init_db=False)
+    client = client_factory(False)
     res = client.post("/api/v1/tables/", json=request_json)
     data = res.get_json()
 
@@ -143,7 +143,7 @@ def test_update_endpoint(
     expected_status_code: int,
     expected_response: dict,
 ):
-    client = client_factory(init_db=True)
+    client = client_factory(True)
     res = client.put("/api/v1/tables/", json=request_json)
     data = res.get_json()
 
@@ -168,7 +168,7 @@ def test_delete_endpoint(
     res_data_attr: str,
     expected_value: str | list[dict],
 ):
-    client = client_factory(init_db=init_db)
+    client = client_factory(init_db)
     res = client.delete(path)
     data = client.get("/api/v1/tables/").get_json()
 
@@ -177,7 +177,7 @@ def test_delete_endpoint(
 
 
 def test_delete_without_existing_table_error_message(client_factory: ClientFactory):
-    with client_factory(init_db=False) as client:
+    with client_factory(False) as client:
         res = client.delete("/api/v1/tables/foo")
         data = res.get_json()
 

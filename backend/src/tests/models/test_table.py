@@ -39,7 +39,7 @@ def test_table_all_query_params(app_factory, params, expected_len, expected_tabl
                 "table_name": "foo",
                 "columns": [
                     {"name": "data", "data_type": "text"},
-                    {"name": "id", "data_type": "serial PRIMARY KEY"},
+                    {"name": "my_id", "data_type": "serial PRIMARY KEY"},
                     {"name": "num", "data_type": "integer"},
                 ],
             },
@@ -47,8 +47,24 @@ def test_table_all_query_params(app_factory, params, expected_len, expected_tabl
                 "table_name": "foo",
                 "columns": [
                     {"name": "data", "data_type": "text"},
-                    {"name": "id", "data_type": "integer"},
+                    {"name": "my_id", "data_type": "integer"},
                     {"name": "num", "data_type": "integer"},
+                ],
+            },
+        ),
+        (
+            {
+                "table_name": "foo",
+                "create_id": "true",
+                "columns": [
+                    {"name": "data", "data_type": "text"},
+                ],
+            },
+            {
+                "table_name": "foo",
+                "columns": [
+                    {"name": "data", "data_type": "text"},
+                    {"name": "id", "data_type": "integer"},
                 ],
             },
         ),
