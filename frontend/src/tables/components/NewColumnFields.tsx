@@ -55,23 +55,23 @@ export default function ColumnFormFields({
     <fieldset {...rest}>
       <Input
         labelText="Column Name"
-        className="mb-2"
+        className="mb-4"
         {...columnName.inputProps}
       />
 
-      <fieldset className="mb-2">
+      <fieldset className="mb-4">
         <SelectInput
           labelText="Colum Data Type"
           prompt="Select A Data Type"
-          className="mb-2"
+          className="mb-4"
           value={selectedDataType.value}
           options={[optionForManualType].concat(columnDataTypes)}
           onChange={handleSelectedTypeChange}
         />
 
         <Input
-          labelText="Modify the data type if needed below:"
-          className="mb-2"
+          labelText="If needed, modify the data type here:"
+          className="mb-4"
           {...columnType.inputProps}
         />
       </fieldset>

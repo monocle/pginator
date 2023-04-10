@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import InputErrorMessage from "../../common/components/InputErrorMessage";
 
 type InputType = "text" | "email" | "address";
@@ -38,9 +38,15 @@ export default function Input({
     onChange(newValue);
   };
 
+  useEffect(() => {
+    if (value === "") {
+      setHasInteracted(false);
+    }
+  }, [value]);
+
   return (
     <div {...rest} className={"relative " + className}>
-      <label className="mb-1 block font-medium text-gray-300" htmlFor={inputId}>
+      <label className="input-label mb-1" htmlFor={inputId}>
         {labelText}
         <input
           id={inputId}

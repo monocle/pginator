@@ -8,7 +8,7 @@ import Input from "../../common/components/Input";
 import Button from "../../common/components/Button";
 import NewColumnFields from "./NewColumnFields";
 import ColumnsSQL from "./ColumnsSQL";
-import InputErrorMessage from "../../common/components/InputErrorMessage";
+import Checkbox from "../../common/components/Checkbox";
 import ErrorMessage from "../../common/components/ErrorMessage";
 
 interface Props {
@@ -19,6 +19,7 @@ export default function CreatTableForm({ tables }: Props) {
   const { resetOutlet } = useContext(ModalContext);
   const { request, createTable } = useCreateTable();
   const [columns, setColumns] = useState<ServerTableColumn[]>([]);
+  const [createId, setCreateId] = useState(true);
   const form = useForm();
   const tableName = form.useInput(isValidTableName(tables));
 
@@ -26,10 +27,12 @@ export default function CreatTableForm({ tables }: Props) {
     setColumns(columns.filter((col) => col.name !== name));
   };
 
+  const handleToggleCreateId = () => setCreateId(!createId);
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (form.isValid()) {
-      createTable({ tableName: tableName.value, columns });
+      createTable({ tableName: tableName.value, columns, createId });
     }
   };
 
@@ -41,20 +44,28 @@ export default function CreatTableForm({ tables }: Props) {
 
   return (
     <div>
-      <h2 className="heading-2">Create A New Table</h2>
+      <h2 className="heading-2 mb-4">Create A New Table</h2>
       <form onSubmit={handleSubmit} className="rounded-lg bg-gray-900 p-4">
         <div className="flex flex-wrap justify-between">
           <div className="mb-4 md:w-3/5">
             <Input
               labelText="Table Name"
-              className="mb-4"
+              className="mb-6"
               {...tableName.inputProps}
             />
 
             <NewColumnFields
+              className="mb-6"
               columns={columns}
               validateColumns={columns}
               setColumns={setColumns}
+            />
+
+            <Checkbox
+              labelText='Include "id" as a primary key'
+              className="mb-4"
+              checked={createId}
+              onChange={handleToggleCreateId}
             />
           </div>
 
@@ -66,19 +77,21 @@ export default function CreatTableForm({ tables }: Props) {
           </div>
         </div>
 
-        <Button
-          text="Create Table"
-          type="submit"
-          disabled={request.isLoading || !form.isValid() || !columns.length}
-          isLoading={request.isLoading}
-        />
+        <div className="mb-4">
+          <Button
+            text="Create Table"
+            type="submit"
+            disabled={request.isLoading || !form.isValid() || !columns.length}
+            isLoading={request.isLoading}
+          />
 
-        <Button
-          text="Cancel"
-          style="danger"
-          className="ml-2"
-          onClick={resetOutlet}
-        />
+          <Button
+            text="Cancel"
+            style="danger"
+            className="ml-2"
+            onClick={resetOutlet}
+          />
+        </div>
         <ErrorMessage errorResponse={request.error} />
       </form>
     </div>

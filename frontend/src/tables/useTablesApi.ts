@@ -16,16 +16,18 @@ export function useCreateTable() {
   const createTable = ({
     tableName,
     columns,
+    createId,
   }: {
     tableName: string;
     columns: ServerTableColumn[];
+    createId: boolean;
   }) => {
     request.mutate({
       queryKey: [
         "tables",
         "tables",
         "POST",
-        { table_name: tableName, columns },
+        { table_name: tableName, columns, create_id: createId },
       ],
     });
   };

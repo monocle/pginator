@@ -13,4 +13,7 @@
   .heading-3 {
     @apply text-xl font-semibold
   }
+  .input-label {
+    @apply block font-medium text-gray-300
+  }
 }
