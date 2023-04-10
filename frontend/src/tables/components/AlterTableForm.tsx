@@ -4,10 +4,10 @@ import OutletContext from "../../common/outletContext";
 import { tableActions } from "../../common/postgres";
 import useForm from "../../common/form/useForm";
 import { isValidTableAction } from "../../common/validators";
+import FormLayout from "../../common/components/FormLayout";
 import Button from "../../common/components/Button";
 import Input from "../../common/components/Input";
 import SelectInput from "../../common/components/SelectInput";
-import ErrorMessage from "../../common/components/ErrorMessage";
 import { useUpdateTable } from "../useTablesApi";
 import NewColumnFields from "./NewColumnFields";
 import AlterTableSQL from "./AlterTableSQL";
@@ -47,9 +47,7 @@ export default function AlterTableForm({ table }: Props) {
     handleSetColumns(columns.filter((col) => col.name !== name));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-
+  const handleSubmit = () => {
     if (form.isValid()) {
       updateTable({
         tableName: table.table_name,
@@ -76,48 +74,54 @@ export default function AlterTableForm({ table }: Props) {
   });
 
   return (
-    <div>
-      <h2 className="heading-2">Editing {table.table_name}</h2>
-      <h3 className="heading-3">Existing Columns</h3>
-      <Columns columns={table.columns} />
+    <FormLayout
+      heading={`Editing the "${table.table_name}" table`}
+      onSumbit={handleSubmit}
+      error={request.error}
+      leftColumn={
+        <>
+          <fieldset className="mb-4">
+            <SelectInput
+              labelText="Alter Action"
+              prompt="Select An Action"
+              options={tableActions}
+              {...sqlAction.inputProps}
+            />
+          </fieldset>
 
-      <form onSubmit={handleSubmit}>
-        <fieldset>
-          <SelectInput
-            labelText="Alter Action"
-            prompt="Select An Action"
-            options={tableActions}
-            {...sqlAction.inputProps}
+          <fieldset className="mb-4">
+            {!sqlAction.isBlank &&
+              (actionComponentMap[sqlAction.value] ?? (
+                <Input
+                  labelText="Remaining SQL Statement"
+                  {...remainingSql.inputProps}
+                />
+              ))}
+          </fieldset>
+        </>
+      }
+      rightColumn={
+        <>
+          <h3 className="heading-3 mb-4">Existing Columns</h3>
+          <Columns className="mb-6" columns={table.columns} />
+
+          <AlterTableSQL
+            tableName={table.table_name}
+            action={sqlAction.value}
+            columns={columns}
+            remainingSql={remainingSql.value}
+            onRemoveColumn={handleRemoveColumn}
           />
-        </fieldset>
-
-        <fieldset>
-          {!sqlAction.isBlank &&
-            (actionComponentMap[sqlAction.value] ?? (
-              <Input
-                labelText="Remaining SQL Statement"
-                {...remainingSql.inputProps}
-              />
-            ))}
-        </fieldset>
-
-        <AlterTableSQL
-          tableName={table.table_name}
-          action={sqlAction.value}
-          columns={columns}
-          remainingSql={remainingSql.value}
-          onRemoveColumn={handleRemoveColumn}
-        />
-
+        </>
+      }
+      submitButton={
         <Button
           text="Update Table"
           type="submit"
           disabled={request.isLoading || !form.isValid()}
+          isLoading={request.isLoading}
         />
-
-        <Button text="Cancel" onClick={resetOutlet} />
-        <ErrorMessage errorResponse={request.error} />
-      </form>
-    </div>
+      }
+    />
   );
 }

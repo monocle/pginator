@@ -52,7 +52,7 @@ export default function Table({ table }: Props) {
         />
       )}
 
-      <Columns columns={table.columns} />
+      <Columns columns={table.columns} className="mt-2" />
     </li>
   );
 }

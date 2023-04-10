@@ -2,15 +2,18 @@ import { ServerTableColumn } from "../../interface";
 
 interface Props {
   columns: ServerTableColumn[];
+  className?: string;
 }
 
-export default function Columns({ columns }: Props) {
+export default function Columns({ className = "", columns }: Props) {
   const firstColumn = columns[0];
 
   if (!firstColumn.name) return <div>Table has no columns</div>;
 
   return (
-    <ul className="mt-2 space-y-2 rounded-lg bg-gray-100 p-4 dark:bg-gray-800">
+    <ul
+      className={`space-y-2 rounded-lg bg-gray-100 p-4 dark:bg-gray-800 ${className}`}
+    >
       {columns.map((column) => (
         <li className="flex text-sm font-medium" key={column.name}>
           <div className="w-1/2">{column.name}</div>
