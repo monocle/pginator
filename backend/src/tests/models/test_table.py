@@ -21,7 +21,7 @@ def app(app_factory) -> Iterator[Flask]:
 )
 def test_table_all_query_params(app_factory, params, expected_len, expected_table_name):
     sql = " ".join(
-        [f'CREATE TABLE "table-{str(i).zfill(2)}" (value text);' for i in range(11)]
+        [f'CREATE TABLE "table-{str(i).zfill(2)}" (value text);' for i in range(0, 11)]
     )
     app = app_factory(sql)
 

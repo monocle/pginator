@@ -1,3 +1,5 @@
+from typing import TYPE_CHECKING
+
 from app.db import DB
 from psycopg.rows import DictRow
 from psycopg.sql import SQL, Identifier
@@ -10,9 +12,13 @@ from pydantic import (
     conlist,
 )
 
+if TYPE_CHECKING:
+    from pydantic.error_wrappers import ErrorDict
 
-def fetch_sql() -> str:
-    return """
+
+def fetch_sql() -> SQL:
+    return SQL(
+        """
     SELECT table_name, columns
     FROM (
         SELECT t.table_name, json_agg(json_build_object('name', c.column_name, 'data_type', c.data_type) ORDER  BY c.column_name) AS columns
@@ -28,6 +34,7 @@ def fetch_sql() -> str:
     ) AS tables
     WHERE tables.table_name=(%(name)s) OR %(name)s = ''
     """
+    )
 
 
 class TableCreateColumn(BaseModel):
@@ -66,12 +73,10 @@ class Table:
     def drop(table_name: str) -> None:
         DB().execute(SQL("DROP TABLE {}").format(Identifier(table_name)))
 
-    def __init__(self, request_dict, is_update_request=False):
-        self.request_dict = request_dict
-        self.name = request_dict.get("table_name")
-        self.action = request_dict.get("action")
+    def __init__(self, request_dict: dict | None, is_update_request=False) -> None:
+        self.request_dict = request_dict or {}
         self._is_update_request = is_update_request
-        self._errors = []
+        self._errors: list["ErrorDict"] = []
 
         self.validate()
 
@@ -91,10 +96,12 @@ class Table:
                 SQL("{} {}").format(Identifier(col["name"]), SQL(col["data_type"]))
                 for col in columns
             )
-            sql = SQL("CREATE TABLE {} ({})").format(Identifier(self.name), columns_sql)
+            sql = SQL("CREATE TABLE {} ({})").format(
+                Identifier(self.request.table_name), columns_sql
+            )
 
             DB().execute(sql)
-            return Table.find(self.name)
+            return Table.find(self.request.table_name)
 
         return None
 
@@ -105,7 +112,7 @@ class Table:
             base_sql_str = "ALTER TABLE {name} {action} {remaining_sql}"
 
             sql = SQL(base_sql_str).format(
-                name=Identifier(self.name),
+                name=Identifier(self.request.table_name),
                 action=SQL(action),
                 remaining_sql=SQL(remaining_sql),
             )
@@ -120,5 +127,5 @@ class Table:
         return len(self._errors) == 0
 
     @property
-    def errors(self) -> tuple[str, ...]:
+    def errors(self) -> tuple["ErrorDict", ...]:
         return tuple(self._errors)
