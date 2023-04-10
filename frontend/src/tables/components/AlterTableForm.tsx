@@ -78,7 +78,7 @@ export default function AlterTableForm({ table }: Props) {
   return (
     <div>
       <h2 className="heading-2">Editing {table.table_name}</h2>
-      <h3>Existing Columns</h3>
+      <h3 className="heading-3">Existing Columns</h3>
       <Columns columns={table.columns} />
 
       <form onSubmit={handleSubmit}>

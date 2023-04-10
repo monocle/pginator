@@ -1,11 +1,12 @@
-import { useState } from "react";
-import { FormValidatorResult, FormInputChangeResult } from "../../interface";
+import React, { useState } from "react";
+import InputErrorMessage from "../../common/components/InputErrorMessage";
 
 type InputType = "text" | "email" | "address";
 
 interface Props {
   labelText: string;
   type?: InputType;
+  className?: string;
   id?: string;
   value: string;
   isValid: boolean;
@@ -19,6 +20,7 @@ let idNum = 0;
 export default function Input({
   labelText,
   type = "text",
+  className = "",
   id = undefined,
   value,
   isValid,
@@ -26,22 +28,37 @@ export default function Input({
   onChange = () => {},
   ...rest
 }: Props) {
-  const inputId = "input-error-" + idNum++;
+  const inputErrorId = "input-error-" + idNum++;
+  const inputId = id ?? "input-" + idNum;
+  const [hasInteracted, setHasInteracted] = useState(false);
+
+  const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const newValue = event.target.value;
+    setHasInteracted(newValue !== "");
+    onChange(newValue);
+  };
 
   return (
-    <div {...rest}>
-      <label className="mb-1 block font-medium text-gray-300">
+    <div {...rest} className={"relative " + className}>
+      <label className="mb-1 block font-medium text-gray-300" htmlFor={inputId}>
         {labelText}
         <input
-          id={id}
-          className="mt-1 w-full rounded-md border-2 border-gray-500 bg-gray-700 px-3 py-2 text-gray-100 focus:border-indigo-500 focus:outline-none"
+          id={inputId}
+          className={`mt-1 w-full rounded-md border-2 px-3 py-2 focus:outline-none ${
+            isValid || !hasInteracted
+              ? "border-gray-500 bg-gray-700 text-gray-100 focus:border-indigo-500"
+              : "border-red-500 bg-gray-700 text-gray-100 focus:border-red-600"
+          }`}
           type={type}
           value={value}
-          onChange={(e) => onChange(e.target.value)}
-          aria-describedby={inputId}
+          onChange={handleInputChange}
+          aria-describedby={inputErrorId}
         />
       </label>
-      {!isValid && <div id={inputId}>{errorMessage}</div>}
+
+      {!isValid && hasInteracted && (
+        <InputErrorMessage message={errorMessage} />
+      )}
     </div>
   );
 }

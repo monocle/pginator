@@ -21,8 +21,7 @@ export default function ErrorMessage({ errorResponse }: Props) {
   }
 
   return (
-    <div className="bg-red-100 text-red-700 p-4 rounded-md my-4">
-      <h3 className="font-medium">Error</h3>
+    <div className="my-4 rounded-md bg-red-100 p-4 text-red-700">
       <p>{errorMessage}</p>
     </div>
   );

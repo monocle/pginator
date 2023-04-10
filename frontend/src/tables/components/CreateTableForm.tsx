@@ -6,9 +6,10 @@ import useForm from "../../common/form/useForm";
 import { isValidTableName } from "../../common/validators";
 import Input from "../../common/components/Input";
 import Button from "../../common/components/Button";
-import ErrorMessage from "../../common/components/ErrorMessage";
 import NewColumnFields from "./NewColumnFields";
 import ColumnsSQL from "./ColumnsSQL";
+import InputErrorMessage from "../../common/components/InputErrorMessage";
+import ErrorMessage from "../../common/components/ErrorMessage";
 
 interface Props {
   tables: ServerTable[];
@@ -68,13 +69,16 @@ export default function CreatTableForm({ tables }: Props) {
         <Button
           text="Create Table"
           type="submit"
-          disabled={
-            request.isLoading || (!form.isValid() && columns.length > 0)
-          }
+          disabled={request.isLoading || !form.isValid() || !columns.length}
           isLoading={request.isLoading}
         />
 
-        <Button text="Cancel" style="danger" onClick={resetOutlet} />
+        <Button
+          text="Cancel"
+          style="danger"
+          className="ml-2"
+          onClick={resetOutlet}
+        />
         <ErrorMessage errorResponse={request.error} />
       </form>
     </div>

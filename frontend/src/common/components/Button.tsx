@@ -42,24 +42,29 @@ export default function Button({
   isLoading = false,
   ...rest
 }: ButtonProps) {
-  let buttonStyle = "py-2 px-4 font-semibold rounded-md";
-  let disabledStyle = "opacity-50 cursor-not-allowed";
+  let buttonStyle =
+    "py-1 px-3 font-semibold rounded-sm transition-all duration-200 text-sm shadow-md ";
+  let disabledStyle = "opacity-50 cursor-not-allowed ";
 
   switch (style) {
     case "primary":
-      buttonStyle += " bg-blue-500 text-white";
+      buttonStyle +=
+        "bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-white";
       break;
     case "secondary":
-      buttonStyle += " bg-gray-700 hover:bg-gray-600 text-white";
+      buttonStyle +=
+        "bg-gradient-to-r from-gray-700 to-gray-800 hover:from-gray-800 hover:to-gray-900 text-white";
       break;
     case "danger":
-      buttonStyle += " bg-red-600 hover:bg-red-500 text-white";
+      buttonStyle +=
+        "bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white";
       break;
     case "disabled":
-      buttonStyle += " bg-gray-300 text-gray-600";
+      buttonStyle += "bg-gray-300 text-gray-600";
       break;
     default:
-      buttonStyle += " bg-blue-500 text-white";
+      buttonStyle +=
+        "bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-white";
       break;
   }
 

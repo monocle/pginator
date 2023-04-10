@@ -10,10 +10,13 @@ export default function Columns({ columns }: Props) {
   if (!firstColumn.name) return <div>Table has no columns</div>;
 
   return (
-    <ul>
+    <ul className="mt-2 space-y-2 rounded-lg bg-gray-100 p-4 dark:bg-gray-800">
       {columns.map((column) => (
-        <li key={column.name}>
-          {column.name} {column.data_type}
+        <li className="flex text-sm font-medium" key={column.name}>
+          <div className="w-1/2">{column.name}</div>
+          <div className="w-1/2 text-gray-500 dark:text-gray-400">
+            {column.data_type}
+          </div>
         </li>
       ))}
     </ul>

@@ -10,4 +10,7 @@
   .heading-2 {
     @apply text-2xl font-bold
   }
+  .heading-3 {
+    @apply text-xl font-semibold
+  }
 }

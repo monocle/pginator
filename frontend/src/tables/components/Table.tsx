@@ -24,7 +24,7 @@ export default function Table({ table }: Props) {
   return (
     <li className="mb-8">
       <div className="flex items-center gap-2">
-        <p>{table.table_name}</p>
+        <p className="text-lg font-semibold">{table.table_name}</p>
         <Button
           text="Edit"
           className="text-sm"
