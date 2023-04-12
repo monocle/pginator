@@ -3,6 +3,7 @@ from typing import Iterator
 import pytest
 from app.models.table import Table
 from flask import Flask
+from psycopg.errors import UndefinedTable
 from tests.fixtures import app_factory
 
 
@@ -262,3 +263,31 @@ def test_validation_for_update(app: Flask, req_dict: dict, expected_errors: list
     with app.app_context():
         table = Table(req_dict, is_update_request=True)
         assert table.errors == expected_errors
+
+
+@pytest.mark.parametrize(
+    "injection_attempt",
+    [
+        ('table-01"; DROP TABLE "table-00";--'),
+        ('table-01";DROP TABLE "table-00";--'),
+        ('table-01"; DROP/*comment*/TABLE "table-00";--'),
+        ('table-01"; DROP TABLE "table-00"; SELECT * FROM "table-01";--'),
+        ("table-01\"; DROP TABLE 'table-00';--"),
+        ('table-01"; DROP TABLE `table-00`;--'),
+    ],
+)
+def test_drop_sql_injection(app_factory, injection_attempt: str):
+    app = app_factory(
+        """CREATE TABLE "table-00" (value text);
+           CREATE TABLE "table-01" (value text);"""
+    )
+
+    with app.app_context():
+        assert Table.find("table-00") is not None
+
+        try:
+            Table.drop(injection_attempt)
+        except UndefinedTable:
+            pass
+
+        assert Table.find("table-00") is not None

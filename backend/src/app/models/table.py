@@ -91,7 +91,7 @@ class Table:
             self._errors = e.errors()
 
     def create(self) -> DictRow | None:
-        if self.valid and type(self.request) == TableCreateRequest:
+        if self.valid and isinstance(self.request, TableCreateRequest):
             id_sql = SQL("id serial PRIMARY KEY")
             columns_sql = SQL(", ").join(
                 SQL("{} {}").format(Identifier(col["name"]), SQL(col["data_type"]))
