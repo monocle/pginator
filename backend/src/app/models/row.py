@@ -93,14 +93,17 @@ class Row:
         return DB().fetch_all(sql)
 
     def find(self) -> DictRow | None:
-        if not self.id:
+        if not self._is_valid_id(self.id):
             return None
 
         sql = FIND_ROW_SQL.format(
             table_name=Identifier(self.table_name),
             id=self.id,
         )
-        return DB().fetch_one(sql)
+        res = DB().fetch_one(sql)
+
+        self._is_valid_id(res)
+        return res
 
     def create(self) -> DictRow | None:
         if not self.valid:
@@ -116,7 +119,7 @@ class Row:
         return DB().fetch_one(sql)
 
     def update(self) -> DictRow | None:
-        if not self.valid or not self.id:
+        if not self.valid or not self._is_valid_id(self.id):
             return None
 
         columns = [
@@ -129,17 +132,23 @@ class Row:
             columns=SQL(", ").join(columns),
             id=self.id,
         )
-        return DB().fetch_one(sql, self.request_values)
+        res = DB().fetch_one(sql, self.request_values)
+
+        self._is_valid_id(res)
+        return res
 
     def delete(self) -> DictRow | None:
-        if not self.id:
+        if not self._is_valid_id(self.id):
             return None
 
         sql = DELETE_ROW_SQL.format(
             table_name=Identifier(self.table_name),
             id=self.id,
         )
-        return DB().fetch_one(sql)
+        res = DB().fetch_one(sql)
+
+        self._is_valid_id(res)
+        return res
 
     @property
     def valid(self) -> bool:
@@ -187,6 +196,12 @@ class Row:
             )
             return False
 
+        return True
+
+    def _is_valid_id(self, id_or_res: str | DictRow | None) -> bool:
+        if not id_or_res:
+            self._add_error(("id",), "Invalid id", "value_error.invalid")
+            return False
         return True
 
     def _add_error(

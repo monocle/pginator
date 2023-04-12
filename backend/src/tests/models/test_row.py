@@ -2,25 +2,9 @@ import pytest
 from app.models.row import Row
 from app.models.table import Table
 from tests.fixtures import app_factory
+from tests.fixtures import app_with_users as app
 
-NUM_ROWS = 21
 TABLE_NAME = "users"
-
-
-@pytest.fixture
-def app(app_factory):
-    values = ", ".join(
-        [f"('first_name{i}', 'last_name{i}')" for i in range(0, NUM_ROWS)]
-    )
-    app = app_factory(
-        f"""
-        CREATE TABLE {TABLE_NAME} (id serial PRIMARY KEY, first_name text, last_name text);
-        INSERT INTO {TABLE_NAME} (first_name, last_name)
-            VALUES {values}
-        """
-    )
-    with app.app_context():
-        yield
 
 
 @pytest.mark.parametrize(
@@ -250,6 +234,28 @@ def test_row_invalid_column_names(app, request_dict, expected_errors):
         assert row.valid
 
     assert row.errors == expected_errors
+
+
+@pytest.mark.parametrize(
+    "method, id, request_dict",
+    [
+        ("update", "-1", {"first_name": "foo", "last_name": "bar"}),
+        ("update", None, {"first_name": "foo", "last_name": "bar"}),
+        ("find", None, None),
+        ("find", "-1", None),
+        ("delete", None, None),
+        ("delete", "-1", None),
+    ],
+)
+def test_invalid_id(app, method, id, request_dict):
+    row = Row(TABLE_NAME, id=id, request_dict=request_dict)
+
+    getattr(row, method)()
+
+    assert not row.valid
+    assert row.errors == (
+        {"loc": ("id",), "msg": "Invalid id", "type": "value_error.invalid"},
+    )
 
 
 def test_row_sql_injection(app):

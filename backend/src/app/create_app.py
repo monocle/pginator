@@ -1,5 +1,6 @@
 from os import environ
 
+from app.api.v1.rows import rows_bp
 from app.api.v1.tables import tables_bp
 from flask import Flask
 
@@ -29,5 +30,6 @@ def create_app(testing=False):
         SECRET_KEY=environ.get("FLASK_SECRET_KEY"),
     )
     app.register_blueprint(tables_bp)
+    app.register_blueprint(rows_bp)
 
     return app
