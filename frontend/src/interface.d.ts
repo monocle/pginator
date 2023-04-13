@@ -29,7 +29,18 @@ export interface ServerTable {
 }
 
 export interface ServerTables {
-  tables: Table[];
+  tables: ServerTable[];
+}
+export interface ServerRow {
+  [key: string]: Any;
+}
+
+export interface ServerRows {
+  rows: ServerRow[];
+}
+
+export interface QueryParams {
+  offset: number;
 }
 
 export type FormValidator = (value: string) => FormValidatorResult;

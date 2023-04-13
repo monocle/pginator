@@ -4,6 +4,7 @@ from flask import Blueprint, request
 rows_bp = Blueprint("rows", __name__, url_prefix="/api/v1/rows")
 
 
+# Forward all PostgreSQL errors
 @rows_bp.errorhandler(Exception)
 def handle_error(error: Exception):
     return {"error": str(error)}, 400

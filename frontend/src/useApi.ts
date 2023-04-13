@@ -4,18 +4,37 @@ import { ErrorResponse } from "./interface";
 const apiPrefix = "api/v1/";
 
 type HttpMethod = "GET" | "POST" | "PUT" | "DELETE";
-type ApiPath = "tables" | `tables/${string}`;
-type QueryKey = [string, ApiPath, HttpMethod?, Object?];
+
+type ApiPath =
+  | "tables"
+  | `tables/${string}`
+  | "rows"
+  | `rows/${string}`
+  | `rows/${string}/${string}`;
+
+type QueryKey = [
+  string,
+  ApiPath,
+  HttpMethod?,
+  Object?,
+  Record<string, string>?
+];
 
 async function apiQuery({ queryKey }: { queryKey: QueryKey }) {
-  const [_, path, method, body] = queryKey;
-  const init: RequestInit = {};
+  const [_, path, method, body, queryParams] = queryKey;
+  let fullPath = apiPrefix + path;
+  const init: RequestInit = {
+    method: method ?? "GET",
+    headers: { "Content-Type": "application/json" },
+  };
 
-  init.method = method ?? "GET";
-  if (!init.headers) init.headers = { "Content-Type": "application/json" };
   if (body) init.body = JSON.stringify(body);
 
-  return fetch(apiPrefix + path, init).then(async (res) => {
+  if (queryParams) {
+    fullPath += "?" + new URLSearchParams(queryParams).toString();
+  }
+
+  return fetch(fullPath, init).then(async (res) => {
     if (res.status >= 500)
       throw new Error("There was a problem with the server.");
     if (!res.ok) throw await res.json();

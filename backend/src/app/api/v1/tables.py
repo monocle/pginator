@@ -4,7 +4,7 @@ from flask import Blueprint, request
 tables_bp = Blueprint("tables", __name__, url_prefix="/api/v1/tables")
 
 
-# Just forward all PostgreSQL errors
+# Forward all PostgreSQL errors
 @tables_bp.errorhandler(Exception)
 def handle_error(error: Exception):
     return {"error": str(error)}, 400
