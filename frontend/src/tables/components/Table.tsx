@@ -1,12 +1,13 @@
 import { useContext, useState } from "react";
 import { ServerTable } from "../../interface";
-import ModalContext from "../../common/outletContext";
+import OutletContext from "../../common/outletContext";
 import { useDeleteTable } from "../useTablesApi";
 import AlterTableForm from "./AlterTableForm";
 import Button from "../../common/components/Button";
 import ErrorMessage from "../../common/components/ErrorMessage";
 import Modal from "../../common/components/Modal";
 import Columns from "./Columns";
+import Rows from "../../rows/Rows";
 
 interface Props {
   table: ServerTable;
@@ -14,17 +15,22 @@ interface Props {
 
 export default function Table({ table }: Props) {
   const [showModal, setShowModal] = useState(false);
-  const { setOutlet } = useContext(ModalContext);
+  const { setOutlet } = useContext(OutletContext);
   const { request, deleteTable } = useDeleteTable();
 
-  const handleOnDeleteTable = (tableName: string) => {
-    setShowModal(true);
+  const handleTableClick = (table: ServerTable) => {
+    setOutlet(<Rows table={table} />);
   };
 
   return (
     <li className="mb-8">
       <div className="flex items-center gap-2">
-        <p className="text-lg font-semibold">{table.table_name}</p>
+        <p
+          className="link text-lg font-semibold"
+          onClick={() => handleTableClick(table)}
+        >
+          {table.table_name}
+        </p>
         <Button
           text="Edit"
           className="text-sm"
@@ -35,7 +41,7 @@ export default function Table({ table }: Props) {
           className="text-sm"
           style="danger"
           disabled={request.isLoading}
-          onClick={() => handleOnDeleteTable(table.table_name)}
+          onClick={() => setShowModal(true)}
         />
         <ErrorMessage errorResponse={request.error} />
       </div>

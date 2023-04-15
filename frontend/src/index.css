@@ -16,4 +16,7 @@
   .input-label {
     @apply block font-medium text-gray-300
   }
+  .link {
+    @apply cursor-pointer text-blue-500 underline underline-offset-4 hover:text-blue-700
+  }
 }

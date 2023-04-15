@@ -9,7 +9,7 @@ export default function Header() {
         <div className="flex text-sm font-semibold text-white">PGinator</div>
         <div className="flex items-center">
           {numFetching > 0 && (
-            <div className="bg-gray-700 p-1 px-4 py-1 text-sm dark:bg-gray-600">
+            <div className="bg-gray-700 px-4 text-sm dark:bg-gray-600">
               Loading...
             </div>
           )}
