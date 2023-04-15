@@ -13,14 +13,12 @@ const OutletContext = createContext<{
 
 export function OutletProvider({ children }: { children: ReactNode }) {
   const [outlet, _setOutlet] = useState<JSX.Element | null>(null);
-  const [defaultComponent, setDefaultComponent] = useState<JSX.Element | null>(
-    null
-  );
-  const resetOutlet = () => _setOutlet(defaultComponent);
+  const [prevComponent, setPrevComponent] = useState<JSX.Element | null>(null);
+  const resetOutlet = () => _setOutlet(prevComponent);
 
   const setOutlet = (element: JSX.Element | null) => {
-    if (!defaultComponent) setDefaultComponent(element);
-    _setOutlet(element ?? defaultComponent);
+    setPrevComponent(outlet);
+    _setOutlet(element ?? prevComponent);
   };
 
   return (
