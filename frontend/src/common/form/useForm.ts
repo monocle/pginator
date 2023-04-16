@@ -1,25 +1,32 @@
-import { FormValidator, FormField, Form, UseInput } from "../../interface";
-import _useInput from "./useInput";
+import { useState } from "react";
+import { FormField, Form, UseInputProps } from "../../interface";
+import _useInput, { defaultValidator } from "./useInput";
 
 const duplicateIdMessage = (id: string) =>
   `[useForm] Form id ${id} already exists`;
 
 export default function useForm(): Form {
-  const isValid = () => fields.every((input) => input.isValid);
-  const reset = () => fields.forEach((input) => input.reset());
-  let fields: FormField[] = [];
+  const isValid = () => fieldsArr.every((input) => input.isValid);
+  const reset = () => fieldsArr.forEach((input) => input.reset());
+  const [fieldsArr, setFieldsArr] = useState<FormField[]>([]);
+  const [fields, setFields] = useState<Record<string, string>>({});
 
-  const useInput: UseInput = (validator?: FormValidator, id?: string) => {
-    const newInput: FormField = _useInput(validator, id);
+  const useInput = ({
+    name = "",
+    validator = defaultValidator,
+    id = undefined,
+  }: UseInputProps = {}) => {
+    const newInput: FormField = _useInput({ name, validator, id });
 
-    if (fields.some((input) => input.id === newInput.id)) {
+    if (fieldsArr.some((input) => input.id === newInput.id)) {
       throw new Error(duplicateIdMessage(newInput.id));
     }
 
-    fields = [...fields, newInput];
+    setFieldsArr([...fieldsArr, newInput]);
+    setFields({ ...fields, [newInput.name]: newInput.value });
 
     return newInput;
   };
 
-  return { useInput, isValid, reset };
+  return { useInput, isValid, fields, fieldsArr, reset };
 }
