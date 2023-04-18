@@ -21,12 +21,22 @@ def fetch_sql() -> SQL:
         """
     SELECT table_name, columns
     FROM (
-        SELECT t.table_name, json_agg(json_build_object('name', c.column_name, 'data_type', c.data_type) ORDER  BY c.column_name) AS columns
+        SELECT t.table_name, json_agg(
+            json_build_object(
+                'name', c.column_name,
+                'data_type', c.data_type,
+                'is_primary_key', COALESCE(tc.constraint_type, '') = 'PRIMARY KEY'
+                ) ORDER  BY c.column_name
+            ) AS columns
         FROM information_schema.tables t
         LEFT JOIN information_schema.columns c
-        ON t.table_name = c.table_name
+            ON t.table_name = c.table_name
+        LEFT JOIN information_schema.key_column_usage kcu
+            ON t.table_name = kcu.table_name AND c.column_name = kcu.column_name
+        LEFT JOIN information_schema.table_constraints tc
+            ON kcu.table_name = tc.table_name AND kcu.constraint_name = tc.constraint_name AND tc.constraint_type = 'PRIMARY KEY'
         WHERE t.table_schema = 'public'
-        AND t.table_type = 'BASE TABLE'
+            AND t.table_type = 'BASE TABLE'
         GROUP BY t.table_name
         ORDER BY t.table_name ASC
         LIMIT %(limit)s
