@@ -6,8 +6,10 @@ from app.db import DB
 from flask import Flask
 from flask.testing import FlaskClient
 from mypy_extensions import Arg
+from psycopg.sql import SQL
 
 AppFactory = Callable[[Arg(str, "sql")], Flask]
+ClientFactory = Callable[[Arg(str, "sql")], FlaskClient]
 
 
 @pytest.fixture
@@ -17,7 +19,7 @@ def app_factory(request: pytest.FixtureRequest) -> AppFactory:
         db = DB(app)
 
         if sql:
-            db.execute(sql)
+            db.execute(sql)  # type: ignore
 
         def teardown():
             db.drop_all_tables()
@@ -31,13 +33,13 @@ def app_factory(request: pytest.FixtureRequest) -> AppFactory:
 @pytest.fixture
 def client_factory(
     request: pytest.FixtureRequest,
-) -> Callable[[Arg(str, "sql")], FlaskClient]:
+) -> ClientFactory:
     def factory(sql: str | None = None) -> FlaskClient:
         app = create_app(testing=True)
         db = DB(app)
 
         if sql:
-            db.execute(sql)
+            db.execute(sql)  # type: ignore
 
         def teardown():
             db.drop_all_tables()

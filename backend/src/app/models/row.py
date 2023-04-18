@@ -26,17 +26,7 @@ SELECT_TABLE_COLUMNS_SQL = SQL(
 SELECT_ROWS_SQL = SQL(
     """
     SELECT * FROM {name}
-    ORDER BY (
-        SELECT column_name
-        FROM information_schema.constraint_column_usage
-        WHERE table_name = {name_str}
-        AND constraint_name IN (
-            SELECT constraint_name
-            FROM information_schema.table_constraints
-            WHERE table_name = {name_str}
-            AND constraint_type = 'PRIMARY KEY'
-        )
-    )
+    {order_by_clause}
     LIMIT {limit}
     OFFSET {offset}
     """
@@ -54,6 +44,7 @@ DELETE_ROW_SQL = SQL("DELETE FROM {table_name} WHERE id = {id} RETURNING id")
 
 
 class QueryParams(BaseModel):
+    order_by: str | None
     limit: PositiveInt | None = Field(default=20)
     offset: NonNegativeInt = Field(default=0)
 
@@ -84,12 +75,19 @@ class Row:
         if not self.valid:
             return None
 
+        order_by_clause = (
+            SQL("ORDER BY {}").format(Identifier(self.query_params.order_by))
+            if self.query_params.order_by
+            else SQL("")
+        )
         sql = SELECT_ROWS_SQL.format(
             name=Identifier(self.table_name),
             name_str=self.table_name,
             limit=self.query_params.limit,
             offset=self.query_params.offset,
+            order_by_clause=order_by_clause,
         )
+
         return DB().fetch_all(sql)
 
     def find(self) -> DictRow | None:

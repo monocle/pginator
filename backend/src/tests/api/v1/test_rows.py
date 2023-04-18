@@ -57,6 +57,20 @@ def test_get_endpoint(
         assert data == expected_results
 
 
+def test_get_sort(client: FlaskClient):
+    path = "/api/v1/rows/users"
+    query_params = {"order_by": "first_name"}
+    new_user = {"first_name": "a"}
+
+    client.post(path, json=new_user)
+    res = client.get(path, query_string=query_params)
+
+    data = res.get_json()
+    rows = data.get("rows")
+
+    assert rows[0]["first_name"] == "a"
+
+
 @pytest.mark.parametrize(
     "path, expected_status_code, expected_value",
     [
