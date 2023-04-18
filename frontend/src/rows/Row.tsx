@@ -13,10 +13,7 @@ interface Props {
 
 export default function Row({ table, row }: Props) {
   const { setOutlet } = useContext(OutletContext);
-  const { id, ...rest } = row;
-
-  // TODO add 'primary_key' to ServerTable
-  const primaryRowKey = { name: "id", value: row.id };
+  const { [table.primary_key]: id, ...rest } = row;
 
   const handleEditClick = () =>
     setOutlet(
@@ -24,8 +21,7 @@ export default function Row({ table, row }: Props) {
         action="Update"
         table={table}
         row={row}
-        sqlComponent={UpdateRowSQL}
-        primaryRowKey={primaryRowKey}
+        SqlStatement={UpdateRowSQL}
         useMutateRow={useUpdateRow}
       />
     );

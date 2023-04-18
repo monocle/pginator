@@ -24,17 +24,18 @@ export default function Rows({ table }: Props) {
   const numRowsPerFetch = 20;
   const [page, setPage] = useState(0);
   const { setOutlet } = useContext(OutletContext);
-  const primaryKeyColumn = table.columns.find((col) => col.is_primary_key);
-  const orderBy = primaryKeyColumn ? primaryKeyColumn.name : "";
   const { data, error } = useGetRows(
     table.table_name,
     page * numRowsPerFetch,
-    orderBy
+    table.primary_key
   );
 
   const headerRow = data?.rows[0];
   const headers = headerRow
-    ? ["id", ...Object.keys(headerRow).filter((key) => key !== "id")]
+    ? [
+        table.primary_key,
+        ...Object.keys(headerRow).filter((key) => key !== table.primary_key),
+      ]
     : [];
 
   const handlePrevious = () => {
@@ -51,7 +52,7 @@ export default function Rows({ table }: Props) {
         action="Create"
         table={table}
         row={createEmptyRow(table)}
-        sqlComponent={InsertRowSQL}
+        SqlStatement={InsertRowSQL}
         useMutateRow={useCreateRow}
       />
     );
@@ -102,7 +103,7 @@ export default function Rows({ table }: Props) {
           </thead>
           <tbody>
             {data.rows.map((row) => (
-              <Row table={table} row={row} key={row.id} />
+              <Row table={table} row={row} key={row[table.primary_key]} />
             ))}
           </tbody>
         </table>

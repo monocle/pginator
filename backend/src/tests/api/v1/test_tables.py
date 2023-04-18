@@ -19,11 +19,12 @@ def client_factory(_client_factory) -> ClientFactory:
 
 FOO_TABLE_RESPONSE_JSON = {
     "columns": [
-        {"name": "address", "data_type": "text", 'is_primary_key': False,},
-        {"name": "id", "data_type": "integer", 'is_primary_key': True,},
-        {"name": "num", "data_type": "integer", 'is_primary_key': False,},
+        {"name": "address", "data_type": "text"},
+        {"name": "id", "data_type": "integer"},
+        {"name": "num", "data_type": "integer"},
     ],
     "table_name": "foo",
+    "primary_key": "id",
 }
 
 
@@ -67,11 +68,12 @@ def test_get_endpoints(
             201,
             {
                 "columns": [
-                    {"name": "created_at", "data_type": "date", 'is_primary_key': False,},
-                    {"name": "exists", "data_type": "boolean", 'is_primary_key': False,},
-                    {"name": "id", "data_type": "integer", 'is_primary_key': True,},
+                    {"name": "created_at", "data_type": "date"},
+                    {"name": "exists", "data_type": "boolean"},
+                    {"name": "id", "data_type": "integer"},
                 ],
                 "table_name": "bar",
+                "primary_key": "id",
             },
         ),
         (

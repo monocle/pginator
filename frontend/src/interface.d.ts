@@ -25,12 +25,12 @@ export type ReactSetter<T> = React.Dispatch<React.SetStateAction<T>>;
 export interface ServerTableColumn {
   name: string;
   data_type: string;
-  is_primary_key: boolean;
 }
 
 export interface ServerTable {
   table_name: string;
   columns: ServerTableColumn[];
+  primary_key: string;
 }
 
 export interface ServerTables {
@@ -94,21 +94,18 @@ export interface Form {
 
 export type TableAction = (typeof tableActions)[number];
 
-export type PrimaryRowKey = { name: string; value: string | number };
-
 export type UseMutateRow = () => {
   request: UseMutationResult<ServerRow, ErrorResponse, any, any>;
   mutateRow: (
-    tableName: string,
+    table: ServerTable,
     params: ServerRow,
-    primaryKey?: PrimaryRowKey
+    id: string | number
   ) => void;
 };
 
-export interface RowSQLComponentProps {
-  tableName: string;
+export interface RowSqlStatementProps {
+  table: ServerTable;
   colNameFields: [string, FormField][];
-  primaryRowKey?: PrimaryRowKey;
 }
 
 export type ButtonStyle =

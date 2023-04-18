@@ -1,14 +1,11 @@
-import { RowSQLComponentProps } from "../interface";
+import { RowSqlStatementProps } from "../interface";
 
 export default function InsertRowSQL({
-  tableName,
+  table,
   colNameFields,
-  primaryRowKey,
-}: RowSQLComponentProps) {
-  if (!primaryRowKey) throw new Error("Primary key required for UpdateRowSQL");
-
+}: RowSqlStatementProps) {
   const colNamesFieldsNoPrimaryKey = colNameFields.filter(
-    ([colName, _]) => colName !== primaryRowKey.name
+    ([colName, _]) => colName !== table.primary_key
   );
   const colNamesStr = colNamesFieldsNoPrimaryKey
     .map(([colName, _]) => colName)
@@ -21,14 +18,14 @@ export default function InsertRowSQL({
   return (
     <div>
       <h3 className="heading-3 mb-4">SQL Statement</h3>
-      <code>UPDATE {tableName} </code>
+      <code>UPDATE {table.table_name} </code>
       <code className="block">&nbsp;&nbsp;SET ({colNamesStr})</code>
       <code className="block">=</code>
       {colValuesStr && (
         <code className="block">&nbsp;&nbsp;({colValuesStr})</code>
       )}
       <code className="block">
-        WHERE {primaryRowKey.name} = '{primaryRowKey.value}'
+        WHERE {table.primary_key} = '{}';
       </code>
     </div>
   );

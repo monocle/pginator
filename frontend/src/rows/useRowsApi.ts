@@ -1,4 +1,4 @@
-import { ServerRows, ServerRow, PrimaryRowKey } from "../interface";
+import { ServerRows, ServerRow, ServerTable } from "../interface";
 import { useGetRequest, useApiMutation } from "../useApi";
 
 export function useGetRows(tableName: string, offset: number, orderBy: string) {
@@ -17,9 +17,9 @@ export function useGetRows(tableName: string, offset: number, orderBy: string) {
 export function useCreateRow() {
   const request = useApiMutation<ServerRow>(["rows"]);
 
-  const mutateRow = (tableName: string, params: ServerRow) => {
+  const mutateRow = (table: ServerTable, params: ServerRow) => {
     request.mutate({
-      queryKey: ["rows", `rows/${tableName}`, "POST", params],
+      queryKey: ["rows", `rows/${table.table_name}`, "POST", params],
     });
   };
 
@@ -30,19 +30,12 @@ export function useUpdateRow() {
   const request = useApiMutation<ServerRow>(["rows"]);
 
   const mutateRow = (
-    tableName: string,
+    table: ServerTable,
     params: ServerRow,
-    primaryKey?: PrimaryRowKey
+    id: string | number
   ) => {
-    if (!primaryKey) throw new Error("Primary key required for useUpdateRow");
-
     request.mutate({
-      queryKey: [
-        "rows",
-        `rows/${tableName}/${primaryKey.value}`,
-        "PUT",
-        params,
-      ],
+      queryKey: ["rows", `rows/${table.table_name}/${id}`, "PUT", params],
     });
   };
 

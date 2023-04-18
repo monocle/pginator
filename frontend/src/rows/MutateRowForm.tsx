@@ -4,8 +4,7 @@ import {
   FormField,
   ServerRow,
   UseMutateRow,
-  RowSQLComponentProps,
-  PrimaryRowKey,
+  RowSqlStatementProps,
 } from "../interface";
 import useForm from "../common/form/useForm";
 import OutletContext from "../common/outletContext";
@@ -19,8 +18,7 @@ interface Props {
   action: "Create" | "Update";
   table: ServerTable;
   row: ServerRow;
-  sqlComponent: React.FC<RowSQLComponentProps>;
-  primaryRowKey?: PrimaryRowKey;
+  SqlStatement: React.FC<RowSqlStatementProps>;
   useMutateRow: UseMutateRow;
 }
 
@@ -28,8 +26,7 @@ export default function CreateRowForm({
   action,
   table,
   row,
-  sqlComponent,
-  primaryRowKey = undefined,
+  SqlStatement,
   useMutateRow,
 }: Props) {
   const [showModal, setShowModal] = useState(false);
@@ -38,14 +35,14 @@ export default function CreateRowForm({
   const form = useForm();
 
   const colNameFields: [string, FormField][] = Object.entries(row)
-    .filter(([name, _]) => !primaryRowKey || name !== primaryRowKey.name)
+    .filter(([name, _]) => !table.primary_key || name !== table.primary_key)
     .map(([name, initialValue]) => [
       name,
       form.useInput({ name, initialValue }),
     ]);
 
   const mutateRow = () =>
-    _mutateRow(table.table_name, form.fields, primaryRowKey);
+    _mutateRow(table, form.fields, row[table.primary_key]);
 
   const handleSubmit = () => {
     if (form.isBlank()) {
@@ -78,11 +75,7 @@ export default function CreateRowForm({
           <>
             <h3 className="heading-3 mb-4">Existing Columns</h3>
             <Columns className="mb-6" columns={table.columns} />
-            {sqlComponent({
-              tableName: table.table_name,
-              colNameFields,
-              primaryRowKey,
-            })}
+            <SqlStatement table={table} colNameFields={colNameFields} />
           </>
         }
         submitButton={
