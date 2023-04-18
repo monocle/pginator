@@ -3,6 +3,7 @@ interface Props {
   options: string[];
   prompt?: string;
   value: string;
+  className?: string;
   onChange: (value: string) => void;
   [x: string]: any;
 }
@@ -12,11 +13,11 @@ export default function SelectInput({
   options,
   prompt = "Select A Value",
   value,
+  className = "",
   onChange,
-  ...rest
 }: Props) {
   return (
-    <div {...rest}>
+    <div className={className}>
       <label className="mb-1 block font-medium text-gray-300">
         {labelText}
         <select

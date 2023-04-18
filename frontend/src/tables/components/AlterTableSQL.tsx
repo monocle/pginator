@@ -18,7 +18,7 @@ export default function AlterTableSQL({
 }: Props) {
   return (
     <div>
-      <h3 className="heading-3">SQL Statement</h3>
+      <h3 className="heading-3  mb-4">SQL Statement</h3>
       <code>ALTER TABLE {tableName} </code>
       <div>
         <code>
@@ -30,14 +30,7 @@ export default function AlterTableSQL({
             />
           ) : (
             <>
-              &nbsp;&nbsp;
-              <span>{action}</span>
-              {remainingSql !== "" && (
-                <>
-                  &nbsp;&nbsp;
-                  <span>{remainingSql}</span>;
-                </>
-              )}
+              &nbsp;&nbsp;{action} {remainingSql};
             </>
           )}
         </code>

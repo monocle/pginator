@@ -29,15 +29,15 @@ export default function ConfirmDeleteModal({
         <p className="mb-4">{message}</p>
         <div className="flex justify-end">
           <Button
-            text={cancelButtonText}
-            style={cancelButtonStyle}
-            className="mr-4"
-            onClick={onCancel}
-          />
-          <Button
+            className="mr-6"
             text={confirmButtonText}
             style={confirmButtonStyle}
             onClick={onConfirm}
+          />
+          <Button
+            text={cancelButtonText}
+            style={cancelButtonStyle}
+            onClick={onCancel}
           />
         </div>
       </div>

@@ -22,7 +22,7 @@ export default function ErrorMessage({ errorResponse }: Props) {
 
   return (
     <div className="my-4 rounded-md bg-red-300 p-4 text-red-900">
-      <p>{errorMessage}</p>
+      {errorMessage}
     </div>
   );
 }

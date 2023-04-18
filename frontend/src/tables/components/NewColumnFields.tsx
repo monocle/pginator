@@ -24,9 +24,15 @@ export default function ColumnFormFields({
 }: Props) {
   const optionForManualType = "Type in a data type";
   const form = useForm();
-  const selectedDataType = form.useInput(isValidTableColumnType);
-  const columnName = form.useInput(isValidTableColumnName(validateColumns));
-  const columnType = form.useInput();
+  const selectedDataType = form.useInput({
+    name: "selectedDataType",
+    validator: isValidTableColumnType,
+  });
+  const columnName = form.useInput({
+    name: "columnName",
+    validator: isValidTableColumnName(validateColumns),
+  });
+  const columnType = form.useInput({ name: "columnType" });
 
   const setNewColumnAndReset = (dataType: string) => {
     const newColumn = { name: columnName.value, data_type: dataType };

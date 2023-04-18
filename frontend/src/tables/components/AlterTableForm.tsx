@@ -25,8 +25,11 @@ export default function AlterTableForm({ table }: Props) {
   const { resetOutlet } = useContext(OutletContext);
   const { request, updateTable } = useUpdateTable();
   const form = useForm();
-  const sqlAction = form.useInput(isValidTableAction);
-  const remainingSql = form.useInput();
+  const sqlAction = form.useInput({
+    name: "sqlAction",
+    validator: isValidTableAction,
+  });
+  const remainingSql = form.useInput({ name: "remainingSql" });
   const [columns, setColumns] = useState<ServerTableColumn[]>([]);
 
   const createColumnsSql = (_columns: ServerTableColumn[]) => {

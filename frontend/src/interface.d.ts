@@ -31,9 +31,7 @@ export interface ServerTable {
 export interface ServerTables {
   tables: ServerTable[];
 }
-export interface ServerRow {
-  [key: string]: Any;
-}
+export type ServerRow = Record<string, string>;
 
 export interface ServerRows {
   rows: ServerRow[];
@@ -56,6 +54,7 @@ export type FormInputChangeResult = ValidatorResult & {
 
 export interface FormField {
   id: string;
+  name: string;
   value: string;
   setValue: (value: string) => void;
   isValid: boolean;
@@ -71,12 +70,19 @@ export interface FormField {
   };
 }
 
-export type UseInput = (validator?: FormValidator, id?: string) => FormField;
+export interface UseInputProps {
+  name?: string;
+  validator?: FormValidator;
+  id?: string;
+}
+
+export type UseInput = ({}: UseInputProps) => FormField;
 
 export interface Form {
   useInput: UseInput;
-  inputs: FormField[];
+  fields: Record<string, string>;
   isValid: () => boolean;
+  isBlank: () => boolean;
   reset: () => void;
 }
 

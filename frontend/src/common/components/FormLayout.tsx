@@ -35,23 +35,24 @@ export default function FormLayout({
 
       <form onSubmit={handleSubit} className="rounded-lg bg-gray-900 p-4">
         <div className="flex flex-wrap justify-between">
-          <div className="mb-4 md:w-6/12">{leftColumn}</div>
+          <div className="mb-4 md:w-6/12">
+            {leftColumn}
+            <div className="mt-4">
+              {submitButton}
+
+              <Button
+                text="Cancel"
+                style="danger"
+                className="ml-2"
+                onClick={resetOutlet}
+              />
+            </div>
+
+            <ErrorMessage errorResponse={error} />
+          </div>
 
           <div className="mb-4 pl-6 md:w-6/12">{rightColumn}</div>
-
-          <div className="mb-4">
-            {submitButton}
-
-            <Button
-              text="Cancel"
-              style="danger"
-              className="ml-2"
-              onClick={resetOutlet}
-            />
-          </div>
         </div>
-
-        <ErrorMessage errorResponse={error} />
       </form>
     </div>
   );

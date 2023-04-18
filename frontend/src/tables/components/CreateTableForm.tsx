@@ -21,7 +21,10 @@ export default function CreatTableForm({ tables }: Props) {
   const [columns, setColumns] = useState<ServerTableColumn[]>([]);
   const [createId, setCreateId] = useState(true);
   const form = useForm();
-  const tableName = form.useInput(isValidTableName(tables));
+  const tableName = form.useInput({
+    name: "table_name",
+    validator: isValidTableName(tables),
+  });
 
   const handleRemoveColumn = (name: string) => {
     setColumns(columns.filter((col) => col.name !== name));
@@ -69,7 +72,7 @@ export default function CreatTableForm({ tables }: Props) {
       }
       rightColumn={
         <>
-          <h3 className="heading-3">SQL Statement</h3>
+          <h3 className="heading-3 mb-4">SQL Statement</h3>
           <code>CREATE TABLE {tableName.value} (</code>
           <ColumnsSQL columns={columns} onRemoveColumn={handleRemoveColumn} />
           <code>);</code>
