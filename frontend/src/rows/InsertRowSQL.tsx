@@ -1,14 +1,12 @@
-import { FormField } from "../interface";
+import { RowSQLComponentProps } from "../interface";
 
-interface Props {
-  tableName: string;
-  colNameFields: [string, FormField][];
-}
-
-export default function InsertRowSQL({ tableName, colNameFields }: Props) {
+export default function InsertRowSQL({
+  tableName,
+  colNameFields,
+}: RowSQLComponentProps) {
   const colNamesStr = colNameFields.map(([colName, _]) => colName).join(", ");
   const colValuesStr = colNameFields
-    .map(([_, input]) => input.value)
+    .map(([_, field]) => field.value)
     .filter((val) => val)
     .join(", ");
 
@@ -19,7 +17,7 @@ export default function InsertRowSQL({ tableName, colNameFields }: Props) {
       <code className="block">&nbsp;&nbsp;({colNamesStr})</code>
       <code className="block">VALUES</code>
       {colValuesStr && (
-        <code className="block">&nbsp;&nbsp;({colValuesStr})</code>
+        <code className="block">&nbsp;&nbsp;({colValuesStr});</code>
       )}
     </div>
   );

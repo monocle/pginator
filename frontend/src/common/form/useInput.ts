@@ -11,11 +11,12 @@ export const defaultValidator: FormValidator = () => ({
 });
 
 export default function useInput({
+  initialValue = "",
   name = "",
   validator = defaultValidator,
   id = undefined,
 }: UseInputProps = {}) {
-  const [value, _setValue] = useState<string>("");
+  const [value, _setValue] = useState<string>(initialValue);
   const [isValid, setIsValid] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
 
@@ -50,7 +51,7 @@ export default function useInput({
     value,
     setValue,
     isValid,
-    isBlank: value.trim() === "",
+    isBlank: typeof value === "string" && value.trim() === "",
     errorMessage,
     reset,
     inputProps,

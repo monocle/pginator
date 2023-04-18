@@ -23,7 +23,7 @@ export default function ConfirmDeleteModal({
   onCancel,
 }: Props) {
   return (
-    <div className="fixed left-0 top-0 z-50 flex h-full w-full items-center justify-center bg-black bg-opacity-60">
+    <div className="fixed left-0 top-0 z-50 flex h-full w-full items-center justify-center bg-black bg-opacity-90">
       <div className="rounded-lg bg-gray-800 p-4">
         <h2 className="mb-2 text-lg font-bold">{heading}</h2>
         <p className="mb-4">{message}</p>

@@ -1,4 +1,8 @@
-import { UseQueryResult } from "@tanstack/react-query";
+import {
+  UseQueryResult,
+  UseMutationResult,
+  QueryKey,
+} from "@tanstack/react-query";
 import React from "react";
 import { tableActions } from "./common/postgres";
 
@@ -21,11 +25,12 @@ export type ReactSetter<T> = React.Dispatch<React.SetStateAction<T>>;
 export interface ServerTableColumn {
   name: string;
   data_type: string;
+  is_primary_key: boolean;
 }
 
 export interface ServerTable {
   table_name: string;
-  columns: TableColumn[];
+  columns: ServerTableColumn[];
 }
 
 export interface ServerTables {
@@ -71,6 +76,7 @@ export interface FormField {
 }
 
 export interface UseInputProps {
+  initialValue?: string;
   name?: string;
   validator?: FormValidator;
   id?: string;
@@ -87,6 +93,23 @@ export interface Form {
 }
 
 export type TableAction = (typeof tableActions)[number];
+
+export type PrimaryRowKey = { name: string; value: string | number };
+
+export type UseMutateRow = () => {
+  request: UseMutationResult<ServerRow, ErrorResponse, any, any>;
+  mutateRow: (
+    tableName: string,
+    params: ServerRow,
+    primaryKey?: PrimaryRowKey
+  ) => void;
+};
+
+export interface RowSQLComponentProps {
+  tableName: string;
+  colNameFields: [string, FormField][];
+  primaryRowKey?: PrimaryRowKey;
+}
 
 export type ButtonStyle =
   | "primary"

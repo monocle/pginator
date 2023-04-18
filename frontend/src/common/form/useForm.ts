@@ -13,6 +13,7 @@ export default function useForm(): Form {
 
   const useInput = ({
     name,
+    initialValue = "",
     validator = defaultValidator,
     id = undefined,
   }: UseInputProps = {}) => {
@@ -22,7 +23,12 @@ export default function useForm(): Form {
       );
     }
 
-    const newField: FormField = _useInput({ name, validator, id });
+    const newField: FormField = _useInput({
+      initialValue,
+      name,
+      validator,
+      id,
+    });
 
     fields.current[newField.name] = newField;
     return newField;

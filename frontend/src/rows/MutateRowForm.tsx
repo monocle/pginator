@@ -1,5 +1,12 @@
-import { useState, useEffect, useContext } from "react";
-import { ServerTable, FormField } from "../interface";
+import React, { useState, useEffect, useContext } from "react";
+import {
+  ServerTable,
+  FormField,
+  ServerRow,
+  UseMutateRow,
+  RowSQLComponentProps,
+  PrimaryRowKey,
+} from "../interface";
 import useForm from "../common/form/useForm";
 import OutletContext from "../common/outletContext";
 import FormLayout from "../common/components/FormLayout";
@@ -7,27 +14,44 @@ import Input from "../common/components/Input";
 import Button from "../common/components/Button";
 import Modal from "../common/components/Modal";
 import Columns from "../tables/components/Columns";
-import { useCreateRow } from "./useRowsApi";
-import InsertRowSQL from "./InsertRowSQL";
 
 interface Props {
+  action: "Create" | "Update";
   table: ServerTable;
+  row: ServerRow;
+  sqlComponent: React.FC<RowSQLComponentProps>;
+  primaryRowKey?: PrimaryRowKey;
+  useMutateRow: UseMutateRow;
 }
 
-export default function CreateRowForm({ table }: Props) {
+export default function CreateRowForm({
+  action,
+  table,
+  row,
+  sqlComponent,
+  primaryRowKey = undefined,
+  useMutateRow,
+}: Props) {
   const [showModal, setShowModal] = useState(false);
   const { resetOutlet } = useContext(OutletContext);
-  const { request, createRow } = useCreateRow();
+  const { request, mutateRow: _mutateRow } = useMutateRow();
   const form = useForm();
-  const colNameFields: [string, FormField][] = table.columns
-    .filter((col) => col.name !== "id")
-    .map((col) => [col.name, form.useInput({ name: col.name })]);
+
+  const colNameFields: [string, FormField][] = Object.entries(row)
+    .filter(([name, _]) => !primaryRowKey || name !== primaryRowKey.name)
+    .map(([name, initialValue]) => [
+      name,
+      form.useInput({ name, initialValue }),
+    ]);
+
+  const mutateRow = () =>
+    _mutateRow(table.table_name, form.fields, primaryRowKey);
 
   const handleSubmit = () => {
     if (form.isBlank()) {
       setShowModal(true);
     } else {
-      createRow(table.table_name, form.fields);
+      mutateRow();
     }
   };
 
@@ -40,7 +64,7 @@ export default function CreateRowForm({ table }: Props) {
   return (
     <>
       <FormLayout
-        heading="Create A New Row"
+        heading={`${action} A Row`}
         onSumbit={handleSubmit}
         error={request.error}
         leftColumn={
@@ -54,15 +78,16 @@ export default function CreateRowForm({ table }: Props) {
           <>
             <h3 className="heading-3 mb-4">Existing Columns</h3>
             <Columns className="mb-6" columns={table.columns} />
-            <InsertRowSQL
-              tableName={table.table_name}
-              colNameFields={colNameFields}
-            />
+            {sqlComponent({
+              tableName: table.table_name,
+              colNameFields,
+              primaryRowKey,
+            })}
           </>
         }
         submitButton={
           <Button
-            text="Create Row"
+            text={`${action} Row`}
             type="submit"
             disabled={request.isLoading}
             isLoading={request.isLoading}
@@ -71,12 +96,12 @@ export default function CreateRowForm({ table }: Props) {
       />
       {showModal && (
         <Modal
-          heading="Adding A Blank Row"
-          message={`Are you sure you want to add a row without any values?`}
-          confirmButtonText="Yes, add the row"
+          heading={`${action} A Blank Row`}
+          message={`Are you sure you want to submit blank values?`}
+          confirmButtonText="Yes"
           confirmButtonStyle="primary"
           cancelButtonStyle="secondary"
-          onConfirm={() => createRow(table.table_name, form.fields)}
+          onConfirm={mutateRow}
           onCancel={() => setShowModal(false)}
         />
       )}

@@ -5,6 +5,7 @@ import { useDeleteTable } from "../useTablesApi";
 import AlterTableForm from "./AlterTableForm";
 import Button from "../../common/components/Button";
 import ErrorMessage from "../../common/components/ErrorMessage";
+import Link from "../../common/components/Link";
 import Modal from "../../common/components/Modal";
 import Columns from "./Columns";
 import Rows from "../../rows/Rows";
@@ -25,12 +26,7 @@ export default function Table({ table }: Props) {
   return (
     <li className="mb-8">
       <div className="flex items-center gap-2">
-        <p
-          className="link text-lg font-semibold"
-          onClick={() => handleTableClick(table)}
-        >
-          {table.table_name}
-        </p>
+        <Link text={table.table_name} onClick={() => handleTableClick(table)} />
         <Button
           text="Edit"
           className="text-sm"

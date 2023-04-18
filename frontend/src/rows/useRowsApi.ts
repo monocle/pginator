@@ -1,42 +1,56 @@
-import { ServerRows, ServerRow } from "../interface";
+import { ServerRows, ServerRow, PrimaryRowKey } from "../interface";
 import { useGetRequest, useApiMutation } from "../useApi";
 
-export function useGetRows(tableName: string, offset: number) {
+export function useGetRows(tableName: string, offset: number, orderBy: string) {
   return useGetRequest<ServerRows>([
     "rows",
     `rows/${tableName}`,
     "GET",
     undefined,
-    { offset: offset.toString() },
+    {
+      offset: offset.toString(),
+      order_by: orderBy,
+    },
   ]);
 }
 
 export function useCreateRow() {
   const request = useApiMutation<ServerRow>(["rows"]);
 
-  const createRow = (tableName: string, params: ServerRow) => {
+  const mutateRow = (tableName: string, params: ServerRow) => {
     request.mutate({
       queryKey: ["rows", `rows/${tableName}`, "POST", params],
     });
   };
 
-  return { request, createRow };
+  return { request, mutateRow };
 }
 
 export function useUpdateRow() {
-  const request = useApiMutation(["rows"]);
+  const request = useApiMutation<ServerRow>(["rows"]);
 
-  const updateRow = (tableName: string, params: ServerRow) => {
+  const mutateRow = (
+    tableName: string,
+    params: ServerRow,
+    primaryKey?: PrimaryRowKey
+  ) => {
+    if (!primaryKey) throw new Error("Primary key required for useUpdateRow");
+
     request.mutate({
-      queryKey: ["rows", `rows/${tableName}`, "PUT", params],
+      queryKey: [
+        "rows",
+        `rows/${tableName}/${primaryKey.value}`,
+        "PUT",
+        params,
+      ],
     });
   };
 
-  return { request, updateRow };
+  return { request, mutateRow };
 }
 
 export function useDeleteRow() {
-  const request = useApiMutation(["rows"]);
+  const request = useApiMutation<ServerRow>(["rows"]);
 
   const deleteRow = (tableName: string, rowId: string) => {
     request.mutate({

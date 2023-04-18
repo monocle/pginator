@@ -1,30 +1,19 @@
-import { useCallback, useContext, useState } from "react";
-import { ServerRow, ServerTable } from "../interface";
+import { useContext, useState } from "react";
+import { ServerTable, ServerRow } from "../interface";
 import ErrorMessage from "../common/components/ErrorMessage";
 import OutletContext from "../common/outletContext";
-import { useGetRows } from "./useRowsApi";
-import CreateRowForm from "./CreateRowForm";
+import { useCreateRow, useGetRows } from "./useRowsApi";
+import InsertRowSQL from "./InsertRowSQL";
+import MutateRowForm from "./MutateRowForm";
+import Row from "./Row";
 
-function Row({ row }: { row: ServerRow }) {
-  const { id, ...rest } = row;
-
-  return (
-    <>
-      <tr>
-        <td className="border border-gray-300 px-4 py-2 dark:border-gray-700">
-          {id}
-        </td>
-        {Object.entries(rest).map(([prop, value]) => (
-          <td
-            key={prop}
-            className="border border-gray-300 px-4 py-2 dark:border-gray-700"
-          >
-            {value}
-          </td>
-        ))}
-      </tr>
-    </>
-  );
+function createEmptyRow(table: ServerTable): ServerRow {
+  return table.columns.reduce((row, col) => {
+    if (col.name !== "id") {
+      row[col.name] = "";
+    }
+    return row;
+  }, {} as ServerRow);
 }
 
 interface Props {
@@ -35,7 +24,13 @@ export default function Rows({ table }: Props) {
   const numRowsPerFetch = 20;
   const [page, setPage] = useState(0);
   const { setOutlet } = useContext(OutletContext);
-  const { data, error } = useGetRows(table.table_name, page * numRowsPerFetch);
+  const primaryKeyColumn = table.columns.find((col) => col.is_primary_key);
+  const orderBy = primaryKeyColumn ? primaryKeyColumn.name : "";
+  const { data, error } = useGetRows(
+    table.table_name,
+    page * numRowsPerFetch,
+    orderBy
+  );
 
   const headerRow = data?.rows[0];
   const headers = headerRow
@@ -51,7 +46,15 @@ export default function Rows({ table }: Props) {
   };
 
   const handleCreateNewRow = () => {
-    setOutlet(<CreateRowForm table={table} />);
+    setOutlet(
+      <MutateRowForm
+        action="Create"
+        table={table}
+        row={createEmptyRow(table)}
+        sqlComponent={InsertRowSQL}
+        useMutateRow={useCreateRow}
+      />
+    );
   };
 
   return (
@@ -99,7 +102,7 @@ export default function Rows({ table }: Props) {
           </thead>
           <tbody>
             {data.rows.map((row) => (
-              <Row row={row} key={row.id} />
+              <Row table={table} row={row} key={row.id} />
             ))}
           </tbody>
         </table>
