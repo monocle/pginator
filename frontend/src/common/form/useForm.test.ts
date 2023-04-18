@@ -15,7 +15,6 @@ describe("useForm", () => {
   it("should initialize with an empty set of fields", () => {
     const { result } = renderHook(() => useForm());
 
-    expect(result.current.fieldsArr).toEqual([]);
     expect(result.current.fields).toEqual({});
   });
 
@@ -28,11 +27,6 @@ describe("useForm", () => {
     const input2 = renderHook(() =>
       result.current.useInput({ name: "input2" })
     );
-
-    expect(result.current.fieldsArr).toEqual([
-      input1.result.current,
-      input2.result.current,
-    ]);
     expect(result.current.fields).toEqual({ input1: "", input2: "" });
   });
 

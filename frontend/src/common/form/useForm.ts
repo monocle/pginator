@@ -1,32 +1,40 @@
-import { useState } from "react";
+import { useRef } from "react";
 import { FormField, Form, UseInputProps } from "../../interface";
 import _useInput, { defaultValidator } from "./useInput";
 
-const duplicateIdMessage = (id: string) =>
-  `[useForm] Form id ${id} already exists`;
-
 export default function useForm(): Form {
-  const isValid = () => fieldsArr.every((input) => input.isValid);
-  const reset = () => fieldsArr.forEach((input) => input.reset());
-  const [fieldsArr, setFieldsArr] = useState<FormField[]>([]);
-  const [fields, setFields] = useState<Record<string, string>>({});
+  const fields = useRef<Record<string, FormField>>({});
+  const isValid = () =>
+    Object.entries(fields.current).every(([_, field]) => field.isValid);
+  const isBlank = () =>
+    Object.entries(fields.current).every(([_, field]) => field.isBlank);
+  const reset = () =>
+    Object.entries(fields.current).forEach(([_, field]) => field.reset());
 
   const useInput = ({
-    name = "",
+    name,
     validator = defaultValidator,
     id = undefined,
   }: UseInputProps = {}) => {
-    const newInput: FormField = _useInput({ name, validator, id });
-
-    if (fieldsArr.some((input) => input.id === newInput.id)) {
-      throw new Error(duplicateIdMessage(newInput.id));
+    if (!name) {
+      throw new Error(
+        "A field name must be provided when using `form.useInput`. "
+      );
     }
 
-    setFieldsArr([...fieldsArr, newInput]);
-    setFields({ ...fields, [newInput.name]: newInput.value });
+    const newField: FormField = _useInput({ name, validator, id });
 
-    return newInput;
+    fields.current[newField.name] = newField;
+    return newField;
   };
 
-  return { useInput, isValid, fields, fieldsArr, reset };
+  const fieldValues = Object.entries(fields.current).reduce(
+    (res, [name, field]) => {
+      res[name] = field.value;
+      return res;
+    },
+    {} as Record<string, string>
+  );
+
+  return { useInput, isValid, isBlank, fields: fieldValues, reset };
 }

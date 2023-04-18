@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState } from "react";
 import { FormValidator, UseInputProps } from "../../interface";
 
 function generateUniqueId(): string {
@@ -35,17 +35,14 @@ export default function useInput({
 
   const fullId = `form-input-${id || generateUniqueId()}`;
 
-  const inputProps = useMemo(
-    () => ({
-      id: fullId,
-      name,
-      value,
-      isValid,
-      errorMessage,
-      onChange: setValue,
-    }),
-    [id, value, isValid, errorMessage, setValue]
-  );
+  const inputProps = {
+    id: fullId,
+    name,
+    value,
+    isValid,
+    errorMessage,
+    onChange: setValue,
+  };
 
   return {
     id: fullId,
