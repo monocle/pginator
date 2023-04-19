@@ -1,9 +1,9 @@
-import { RowSQLComponentProps } from "../interface";
+import { RowSqlStatementProps } from "../interface";
 
 export default function InsertRowSQL({
-  tableName,
+  table,
   colNameFields,
-}: RowSQLComponentProps) {
+}: RowSqlStatementProps) {
   const colNamesStr = colNameFields.map(([colName, _]) => colName).join(", ");
   const colValuesStr = colNameFields
     .map(([_, field]) => field.value)
@@ -13,7 +13,7 @@ export default function InsertRowSQL({
   return (
     <div>
       <h3 className="heading-3 mb-4">SQL Statement</h3>
-      <code>INSERT INTO {tableName} </code>
+      <code>INSERT INTO {table.table_name} </code>
       <code className="block">&nbsp;&nbsp;({colNamesStr})</code>
       <code className="block">VALUES</code>
       {colValuesStr && (

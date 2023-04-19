@@ -67,7 +67,11 @@ export default function CreateRowForm({
           <>
             <h3 className="heading-3 mb-4">Existing Columns</h3>
             <Columns className="mb-6" columns={table.columns} />
-            <SqlStatement table={table} colNameFields={colNameFields} />
+            <SqlStatement
+              table={table}
+              row={row}
+              colNameFields={colNameFields}
+            />
           </>
         }
         submitButton={

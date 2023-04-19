@@ -103,6 +103,7 @@ export type UseMutateRow = () => {
 
 export interface RowSqlStatementProps {
   table: ServerTable;
+  row: ServerRow;
   colNameFields: [string, FormField][];
 }
 

@@ -2,6 +2,7 @@ import { RowSqlStatementProps } from "../interface";
 
 export default function InsertRowSQL({
   table,
+  row,
   colNameFields,
 }: RowSqlStatementProps) {
   const colNamesFieldsNoPrimaryKey = colNameFields.filter(
@@ -25,7 +26,7 @@ export default function InsertRowSQL({
         <code className="block">&nbsp;&nbsp;({colValuesStr})</code>
       )}
       <code className="block">
-        WHERE {table.primary_key} = '{}';
+        WHERE {table.primary_key} = '{row[table.primary_key]}';
       </code>
     </div>
   );
