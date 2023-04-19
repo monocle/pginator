@@ -1,5 +1,7 @@
+import { useContext } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { ErrorResponse } from "./interface";
+import OutletContext from "./common/outletContext";
 
 const apiPrefix = "api/v1/";
 
@@ -55,13 +57,21 @@ export function useGetRequest<T>(queryKey: QueryKey) {
   });
 }
 
-export function useApiMutation<T>(queryKeyToInvalidate: string[]) {
+export function useApiMutation<T>(
+  queryKeyToInvalidate: string[],
+  resetOutletOnSuccess = false
+) {
   const queryClient = useQueryClient();
+  const { resetOutlet } = useContext(OutletContext);
 
   return useMutation<T, ErrorResponse, { queryKey: QueryKey }, any>({
     mutationFn: apiQuery,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: queryKeyToInvalidate });
+
+      if (resetOutletOnSuccess) {
+        resetOutlet();
+      }
     },
   });
 }

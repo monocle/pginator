@@ -1,7 +1,6 @@
-import { useContext, useState, useEffect } from "react";
+import { useState } from "react";
 import { ServerTable, ServerTableColumn } from "../../interface";
 import { useCreateTable } from "../useTablesApi";
-import ModalContext from "../../common/outletContext";
 import useForm from "../../common/form/useForm";
 import { isValidTableName } from "../../common/validators";
 import FormLayout from "../../common/components/FormLayout";
@@ -16,7 +15,6 @@ interface Props {
 }
 
 export default function CreatTableForm({ tables }: Props) {
-  const { resetOutlet } = useContext(ModalContext);
   const { request, createTable } = useCreateTable();
   const [columns, setColumns] = useState<ServerTableColumn[]>([]);
   const [createId, setCreateId] = useState(true);
@@ -37,12 +35,6 @@ export default function CreatTableForm({ tables }: Props) {
       createTable({ tableName: tableName.value, columns, createId });
     }
   };
-
-  useEffect(() => {
-    if (request.isSuccess) {
-      resetOutlet();
-    }
-  });
 
   return (
     <FormLayout

@@ -11,7 +11,7 @@ export function useGetTables() {
 }
 
 export function useCreateTable() {
-  const request = useApiMutation<ServerTable>(["tables"]);
+  const request = useApiMutation<ServerTable>(["tables"], true);
 
   const createTable = ({
     tableName,
@@ -36,7 +36,7 @@ export function useCreateTable() {
 }
 
 export function useUpdateTable() {
-  const request = useApiMutation(["tables"]);
+  const request = useApiMutation(["tables"], true);
 
   const updateTable = ({
     tableName,

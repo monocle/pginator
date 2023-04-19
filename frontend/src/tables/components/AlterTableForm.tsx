@@ -1,6 +1,5 @@
-import { useContext, useState, useEffect } from "react";
+import { useState } from "react";
 import { ServerTable, ServerTableColumn, TableAction } from "../../interface";
-import OutletContext from "../../common/outletContext";
 import { tableActions } from "../../common/postgres";
 import useForm from "../../common/form/useForm";
 import { isValidTableAction } from "../../common/validators";
@@ -22,7 +21,6 @@ interface Props {
 }
 
 export default function AlterTableForm({ table }: Props) {
-  const { resetOutlet } = useContext(OutletContext);
   const { request, updateTable } = useUpdateTable();
   const form = useForm();
   const sqlAction = form.useInput({
@@ -69,12 +67,6 @@ export default function AlterTableForm({ table }: Props) {
       />
     ),
   };
-
-  useEffect(() => {
-    if (request.isSuccess) {
-      resetOutlet();
-    }
-  });
 
   return (
     <FormLayout

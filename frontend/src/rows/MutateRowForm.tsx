@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from "react";
+import React, { useState } from "react";
 import {
   ServerTable,
   FormField,
@@ -7,7 +7,6 @@ import {
   RowSqlStatementProps,
 } from "../interface";
 import useForm from "../common/form/useForm";
-import OutletContext from "../common/outletContext";
 import FormLayout from "../common/components/FormLayout";
 import Input from "../common/components/Input";
 import Button from "../common/components/Button";
@@ -30,7 +29,6 @@ export default function CreateRowForm({
   useMutateRow,
 }: Props) {
   const [showModal, setShowModal] = useState(false);
-  const { resetOutlet } = useContext(OutletContext);
   const { request, mutateRow: _mutateRow } = useMutateRow();
   const form = useForm();
 
@@ -51,12 +49,6 @@ export default function CreateRowForm({
       mutateRow();
     }
   };
-
-  useEffect(() => {
-    if (request.isSuccess) {
-      resetOutlet();
-    }
-  });
 
   return (
     <>

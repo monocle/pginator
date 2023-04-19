@@ -15,7 +15,7 @@ export function useGetRows(tableName: string, offset: number, orderBy: string) {
 }
 
 export function useCreateRow() {
-  const request = useApiMutation<ServerRow>(["rows"]);
+  const request = useApiMutation<ServerRow>(["rows"], true);
 
   const mutateRow = (table: ServerTable, params: ServerRow) => {
     request.mutate({
@@ -27,7 +27,7 @@ export function useCreateRow() {
 }
 
 export function useUpdateRow() {
-  const request = useApiMutation<ServerRow>(["rows"]);
+  const request = useApiMutation<ServerRow>(["rows"], true);
 
   const mutateRow = (
     table: ServerTable,

@@ -94,13 +94,11 @@ export interface Form {
 
 export type TableAction = (typeof tableActions)[number];
 
+export type RowId = string | number;
+
 export type UseMutateRow = () => {
   request: UseMutationResult<ServerRow, ErrorResponse, any, any>;
-  mutateRow: (
-    table: ServerTable,
-    params: ServerRow,
-    id: string | number
-  ) => void;
+  mutateRow: (table: ServerTable, params: ServerRow, id: RowId) => void;
 };
 
 export interface RowSqlStatementProps {
