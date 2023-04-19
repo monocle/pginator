@@ -1,4 +1,4 @@
-import { ServerRows, ServerRow, ServerTable } from "../interface";
+import { ServerRows, ServerRow, ServerTable, RowId } from "../interface";
 import { useGetRequest, useApiMutation } from "../useApi";
 
 export function useGetRows(tableName: string, offset: number, orderBy: string) {
@@ -45,7 +45,7 @@ export function useUpdateRow() {
 export function useDeleteRow() {
   const request = useApiMutation<ServerRow>(["rows"]);
 
-  const deleteRow = (tableName: string, rowId: string) => {
+  const deleteRow = (tableName: string, rowId: RowId) => {
     request.mutate({
       queryKey: ["rows", `rows/${tableName}/${rowId}`, "DELETE"],
     });

@@ -1,4 +1,4 @@
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { ServerTable } from "../../interface";
 import OutletContext from "../../common/outletContext";
 import { useDeleteTable } from "../useTablesApi";
@@ -22,6 +22,12 @@ export default function Table({ table }: Props) {
   const handleTableClick = (table: ServerTable) => {
     setOutlet(<Rows table={table} />);
   };
+
+  useEffect(() => {
+    if (!request.isLoading) {
+      setShowModal(false);
+    }
+  }, [request.isLoading]);
 
   return (
     <li className="mb-8">
@@ -49,6 +55,7 @@ export default function Table({ table }: Props) {
           confirmButtonText="Drop Table"
           confirmButtonStyle="danger"
           cancelButtonStyle="secondary"
+          isLoading={request.isLoading}
           onConfirm={() => deleteTable(table.table_name)}
           onCancel={() => setShowModal(false)}
         />

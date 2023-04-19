@@ -8,6 +8,7 @@ interface Props {
   cancelButtonText?: string | JSX.Element;
   confirmButtonStyle?: ButtonStyle;
   cancelButtonStyle?: ButtonStyle;
+  isLoading: boolean;
   onConfirm: () => void;
   onCancel: () => void;
 }
@@ -19,6 +20,7 @@ export default function ConfirmDeleteModal({
   cancelButtonText = "Cancel",
   confirmButtonStyle = "secondary",
   cancelButtonStyle = "danger",
+  isLoading = false,
   onConfirm,
   onCancel,
 }: Props) {
@@ -32,6 +34,8 @@ export default function ConfirmDeleteModal({
             className="mr-6"
             text={confirmButtonText}
             style={confirmButtonStyle}
+            isLoading={isLoading}
+            disabled={isLoading}
             onClick={onConfirm}
           />
           <Button

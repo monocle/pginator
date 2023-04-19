@@ -1,6 +1,7 @@
 import { useContext } from "react";
 import { ServerRow, ServerTable } from "../interface";
 import OutletContext from "../common/outletContext";
+import Button from "../common/components/Button";
 import Link from "../common/components/Link";
 import { useUpdateRow } from "./useRowsApi";
 import MutateRowForm from "./MutateRowForm";
@@ -9,11 +10,13 @@ import UpdateRowSQL from "./UpdateRowSQL";
 interface Props {
   table: ServerTable;
   row: ServerRow;
+  onDelete: (id: string | number) => void;
 }
 
-export default function Row({ table, row }: Props) {
+export default function Row({ table, row, onDelete }: Props) {
   const { setOutlet } = useContext(OutletContext);
   const { [table.primary_key]: id, ...rest } = row;
+  const borderClassName = "border border-gray-300 px-4 dark:border-gray-700";
 
   const handleEditClick = () =>
     setOutlet(
@@ -29,18 +32,24 @@ export default function Row({ table, row }: Props) {
   return (
     <>
       <tr>
-        <td className="border border-gray-300 px-4 dark:border-gray-700">
+        <td className={borderClassName}>
           <Link text={id} onClick={handleEditClick} />
         </td>
 
         {Object.entries(rest).map(([prop, value]) => (
-          <td
-            key={prop}
-            className="border border-gray-300 px-4 dark:border-gray-700"
-          >
+          <td key={prop} className={borderClassName}>
             {value}
           </td>
         ))}
+        <td className={borderClassName + " w-2"}>
+          <Button
+            text="X"
+            style="danger"
+            disabled={false}
+            isLoading={false}
+            onClick={() => onDelete(id)}
+          />
+        </td>
       </tr>
     </>
   );

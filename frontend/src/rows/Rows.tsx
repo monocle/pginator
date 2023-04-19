@@ -1,15 +1,16 @@
-import { useContext, useState } from "react";
-import { ServerTable, ServerRow } from "../interface";
-import ErrorMessage from "../common/components/ErrorMessage";
+import { useContext, useEffect, useState } from "react";
+import { ServerTable, ServerRow, RowId } from "../interface";
 import OutletContext from "../common/outletContext";
-import { useCreateRow, useGetRows } from "./useRowsApi";
+import ErrorMessage from "../common/components/ErrorMessage";
+import Modal from "../common/components/Modal";
+import { useGetRows, useCreateRow, useDeleteRow } from "./useRowsApi";
 import InsertRowSQL from "./InsertRowSQL";
 import MutateRowForm from "./MutateRowForm";
 import Row from "./Row";
 
 function createEmptyRow(table: ServerTable): ServerRow {
   return table.columns.reduce((row, col) => {
-    if (col.name !== "id") {
+    if (col.name !== table.primary_key) {
       row[col.name] = "";
     }
     return row;
@@ -23,18 +24,22 @@ interface Props {
 export default function Rows({ table }: Props) {
   const numRowsPerFetch = 20;
   const [page, setPage] = useState(0);
+  const [showModal, setShowModal] = useState(false);
+  const [rowIdToDelete, setRowIdToDelete] = useState<RowId>();
   const { setOutlet } = useContext(OutletContext);
   const { data, error } = useGetRows(
     table.table_name,
     page * numRowsPerFetch,
     table.primary_key
   );
+  const { request, deleteRow } = useDeleteRow();
 
   const headerRow = data?.rows[0];
   const headers = headerRow
     ? [
         table.primary_key,
         ...Object.keys(headerRow).filter((key) => key !== table.primary_key),
+        "",
       ]
     : [];
 
@@ -57,6 +62,20 @@ export default function Rows({ table }: Props) {
       />
     );
   };
+
+  const handleDeleteRow = (id: RowId) => {
+    if (id) {
+      setShowModal(true);
+      setRowIdToDelete(id);
+    }
+  };
+
+  useEffect(() => {
+    if (!request.isLoading) {
+      setShowModal(false);
+      setRowIdToDelete(undefined);
+    }
+  }, [request.isLoading]);
 
   return (
     <div>
@@ -94,7 +113,7 @@ export default function Rows({ table }: Props) {
               {headers.map((header) => (
                 <th
                   key={header}
-                  className="border border-gray-300 bg-gray-200 px-4 py-2 text-left dark:border-gray-700 dark:bg-gray-800"
+                  className="border border-gray-300 bg-gray-200 px-4 py-1 text-left dark:border-gray-700 dark:bg-gray-800"
                 >
                   {header}
                 </th>
@@ -103,12 +122,30 @@ export default function Rows({ table }: Props) {
           </thead>
           <tbody>
             {data.rows.map((row) => (
-              <Row table={table} row={row} key={row[table.primary_key]} />
+              <Row
+                table={table}
+                row={row}
+                onDelete={handleDeleteRow}
+                key={row[table.primary_key]}
+              />
             ))}
           </tbody>
         </table>
       )}
       <ErrorMessage errorResponse={error} />
+
+      {showModal && (
+        <Modal
+          heading="Delete Row"
+          message={`Are you sure you want to permanently delete row "${rowIdToDelete}"?`}
+          confirmButtonText="Delete Row"
+          confirmButtonStyle="danger"
+          cancelButtonStyle="secondary"
+          isLoading={request.isLoading}
+          onConfirm={() => deleteRow(table.table_name, rowIdToDelete as RowId)}
+          onCancel={() => setShowModal(false)}
+        />
+      )}
     </div>
   );
 }
