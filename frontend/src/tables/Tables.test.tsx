@@ -1,22 +1,18 @@
 import { vi } from "vitest";
-import { render, screen } from "@testing-library/react";
-import userEvent from "@testing-library/user-event";
-import App from "../App";
-import { OutletProvider } from "../common/outletContext";
+import { setup } from "../../test/testHelper";
 import { ServerTables } from "../interface";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 const mockTablesData: ServerTables = {
   tables: [
     {
       table_name: "table1",
-      columns: [],
-      primary_key: "",
+      columns: [{ name: "col1", data_type: "dt1" }],
+      primary_key: "col1",
     },
     {
       table_name: "table2",
-      columns: [],
-      primary_key: "",
+      columns: [{ name: "col2", data_type: "dt2" }],
+      primary_key: "col2",
     },
   ],
 };
@@ -43,31 +39,11 @@ vi.mock("./useTablesApi", () => {
   return { useGetTables, useDeleteTable, useCreateTable };
 });
 
-const queryClient = new QueryClient({
-  defaultOptions: {
-    queries: {
-      staleTime: Infinity,
-    },
-  },
-});
+it("renders add table button and triggers onClick", async () => {
+  const { user, screen } = setup();
+  const addButton = screen.getByRole("button", { name: "+" });
 
-describe("Tables", () => {
-  beforeEach(() => {
-    render(
-      <QueryClientProvider client={queryClient}>
-        <OutletProvider>
-          <App />
-        </OutletProvider>
-      </QueryClientProvider>
-    );
-  });
+  await user.click(addButton);
 
-  test("renders add table button and triggers onClick", async () => {
-    const user = userEvent.setup();
-    const addButton = screen.getByRole("button", { name: "+" });
-
-    await user.click(addButton);
-
-    expect(screen.queryByText("Create A New Table")).toBeInTheDocument();
-  });
+  expect(screen.queryByText("Create A New Table")).toBeInTheDocument();
 });
