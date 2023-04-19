@@ -1,14 +1,14 @@
 import { useContext, useEffect, useState } from "react";
-import { ServerTable } from "../../interface";
-import OutletContext from "../../common/outletContext";
-import { useDeleteTable } from "../useTablesApi";
+import { ServerTable } from "../interface";
+import OutletContext from "../common/outletContext";
+import { useDeleteTable } from "./useTablesApi";
 import AlterTableForm from "./AlterTableForm";
-import Button from "../../common/components/Button";
-import ErrorMessage from "../../common/components/ErrorMessage";
-import Link from "../../common/components/Link";
-import Modal from "../../common/components/Modal";
+import Button from "../common/components/Button";
+import ErrorMessage from "../common/components/ErrorMessage";
+import Link from "../common/components/Link";
+import Modal from "../common/components/Modal";
 import Columns from "./Columns";
-import Rows from "../../rows/Rows";
+import Rows from "../rows/Rows";
 
 interface Props {
   table: ServerTable;

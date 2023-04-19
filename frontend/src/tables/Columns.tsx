@@ -1,4 +1,4 @@
-import { ServerTableColumn } from "../../interface";
+import { ServerTableColumn } from "../interface";
 
 interface Props {
   columns: ServerTableColumn[];
@@ -8,7 +8,7 @@ interface Props {
 export default function Columns({ className = "", columns }: Props) {
   const firstColumn = columns[0];
 
-  if (!firstColumn.name) return <div>Table has no columns</div>;
+  if (!firstColumn?.name) return <div>Table has no columns</div>;
 
   return (
     <ul

@@ -1,5 +1,5 @@
-import { ServerTableColumn, TableAction } from "../../interface";
-import Button from "../../common/components/Button";
+import { ServerTableColumn, TableAction } from "../interface";
+import Button from "../common/components/Button";
 
 interface Props {
   columns: ServerTableColumn[];

@@ -1,8 +1,8 @@
 import { useContext } from "react";
-import OutletContext from "../../common/outletContext";
-import { useGetTables } from "../useTablesApi";
-import Button from "../../common/components/Button";
-import ErrorMessage from "../../common/components/ErrorMessage";
+import OutletContext from "../common/outletContext";
+import { useGetTables } from "./useTablesApi";
+import Button from "../common/components/Button";
+import ErrorMessage from "../common/components/ErrorMessage";
 import Table from "./Table";
 import CreateTableForm from "./CreateTableForm";
 

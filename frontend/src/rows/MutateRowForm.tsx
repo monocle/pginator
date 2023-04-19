@@ -11,7 +11,7 @@ import FormLayout from "../common/components/FormLayout";
 import Input from "../common/components/Input";
 import Button from "../common/components/Button";
 import Modal from "../common/components/Modal";
-import Columns from "../tables/components/Columns";
+import Columns from "../tables/Columns";
 
 interface Props {
   action: "Create" | "Update";

@@ -1,4 +1,4 @@
-import { ServerTableColumn, TableAction } from "../../interface";
+import { ServerTableColumn, TableAction } from "../interface";
 import ColumnsSQL from "./ColumnsSQL";
 
 interface Props {

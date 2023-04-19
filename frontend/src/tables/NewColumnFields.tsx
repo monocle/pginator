@@ -1,13 +1,13 @@
-import { ServerTableColumn } from "../../interface";
-import { columnDataTypes } from "../../common/postgres";
+import { ServerTableColumn } from "../interface";
+import { columnDataTypes } from "../common/postgres";
 import {
   isValidTableColumnName,
   isValidTableColumnType,
-} from "../../common/validators";
-import Button from "../../common/components/Button";
-import Input from "../../common/components/Input";
-import SelectInput from "../../common/components/SelectInput";
-import useForm from "../../common/form/useForm";
+} from "../common/validators";
+import Button from "../common/components/Button";
+import Input from "../common/components/Input";
+import SelectInput from "../common/components/SelectInput";
+import useForm from "../common/form/useForm";
 
 interface Props {
   columns: ServerTableColumn[];
