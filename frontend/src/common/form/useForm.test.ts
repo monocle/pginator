@@ -15,7 +15,7 @@ describe("useForm", () => {
   it("should initialize with an empty set of fields", () => {
     const { result } = renderHook(() => useForm());
 
-    expect(result.current.fields).toEqual({});
+    expect(result.current.getFields()).toEqual({});
   });
 
   it("should add fields using useInput", () => {
@@ -24,28 +24,23 @@ describe("useForm", () => {
     const input1 = renderHook(() =>
       useInput({ name: "input1", validator: customValidator })
     );
-    const input2 = renderHook(() =>
-      result.current.useInput({ name: "input2" })
-    );
-    expect(result.current.fields).toEqual({ input1: "", input2: "" });
-  });
 
-  // Test passes, but error output is displayed when the test is run.
-  it.skip("should not allow duplicate field ids", () => {
-    const { result } = renderHook(() => useForm());
-    const customId = "custom-id";
-    renderHook(() => result.current.useInput({ id: customId }));
+    renderHook(() => result.current.useInput({ name: "input2" }));
 
-    expect(() =>
-      renderHook(() => result.current.useInput({ id: customId }))
-    ).toThrowError(`[useForm] Form id form-input-${customId} already exists`);
+    expect(result.current.getFields()).toEqual({ input1: "", input2: "" });
+
+    act(() => input1.result.current.setValue("foo"));
+
+    expect(result.current.getFields()).toEqual({ input1: "foo", input2: "" });
   });
 
   it("should check if the form is valid", () => {
     const form = renderHook(() => useForm());
     const useInput = form.result.current.useInput;
-    const input1 = renderHook(() => useInput({ validator: customValidator }));
-    const input2 = renderHook(() => useInput({}));
+    const input1 = renderHook(() =>
+      useInput({ name: "input1", validator: customValidator })
+    );
+    const input2 = renderHook(() => useInput({ name: "input2" }));
 
     act(() => {
       input1.result.current.setValue("test");
@@ -64,9 +59,11 @@ describe("useForm", () => {
   it("should reset all fields in the form", () => {
     const { result } = renderHook(() => useForm());
     const input1 = renderHook(() =>
-      result.current.useInput({ validator: customValidator })
+      result.current.useInput({ name: "input1", validator: customValidator })
     );
-    const input2 = renderHook(() => result.current.useInput({}));
+    const input2 = renderHook(() =>
+      result.current.useInput({ name: "input2" })
+    );
 
     act(() => {
       input1.result.current.setValue("t");

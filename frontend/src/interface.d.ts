@@ -86,7 +86,7 @@ export type UseInput = ({}: UseInputProps) => FormField;
 
 export interface Form {
   useInput: UseInput;
-  fields: Record<string, string>;
+  getFields: () => Record<string, string>;
   isValid: () => boolean;
   isBlank: () => boolean;
   reset: () => void;

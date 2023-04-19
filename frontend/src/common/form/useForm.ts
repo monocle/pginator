@@ -1,4 +1,4 @@
-import { useRef } from "react";
+import { useRef, useMemo } from "react";
 import { FormField, Form, UseInputProps } from "../../interface";
 import _useInput, { defaultValidator } from "./useInput";
 
@@ -34,13 +34,11 @@ export default function useForm(): Form {
     return newField;
   };
 
-  const fieldValues = Object.entries(fields.current).reduce(
-    (res, [name, field]) => {
+  const getFields = () =>
+    Object.entries(fields.current).reduce((res, [name, field]) => {
       res[name] = field.value;
       return res;
-    },
-    {} as Record<string, string>
-  );
+    }, {} as Record<string, string>);
 
-  return { useInput, isValid, isBlank, fields: fieldValues, reset };
+  return { useInput, isValid, isBlank, getFields, reset };
 }

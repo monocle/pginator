@@ -40,7 +40,7 @@ export default function CreateRowForm({
     ]);
 
   const mutateRow = () =>
-    _mutateRow(table, form.fields, row[table.primary_key]);
+    _mutateRow(table, form.getFields(), row[table.primary_key]);
 
   const handleSubmit = () => {
     if (form.isBlank()) {
@@ -90,6 +90,7 @@ export default function CreateRowForm({
           confirmButtonText="Yes"
           confirmButtonStyle="primary"
           cancelButtonStyle="secondary"
+          isLoading={request.isLoading}
           onConfirm={mutateRow}
           onCancel={() => setShowModal(false)}
         />
