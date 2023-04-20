@@ -24,10 +24,8 @@ export default function Table({ table }: Props) {
   };
 
   useEffect(() => {
-    if (!request.isLoading) {
-      setShowModal(false);
-    }
-  }, [request.isLoading]);
+    setShowModal(false);
+  }, [request.isSuccess]);
 
   return (
     <li className="mb-8">

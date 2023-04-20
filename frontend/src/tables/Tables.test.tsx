@@ -1,17 +1,8 @@
-import { waitFor } from "@testing-library/react";
-import { setup } from "../../test/testHelper";
+import { setup, clickButton } from "../../test/testHelper";
 
 it("renders add table button and triggers onClick", async () => {
   const { user, screen } = setup();
-  let addButton: HTMLElement | undefined = undefined;
 
-  await waitFor(() => {
-    addButton = screen.getByRole("button", { name: "+" });
-  });
-
-  if (addButton) {
-    await user.click(addButton);
-  }
-
+  await clickButton("+", user);
   expect(screen.queryByText("Create A New Table")).toBeInTheDocument();
 });
