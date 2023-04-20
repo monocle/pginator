@@ -24,7 +24,7 @@ type QueryKey = [
 
 async function apiQuery({ queryKey }: { queryKey: QueryKey }) {
   const [_, path, method, body, queryParams] = queryKey;
-  let fullPath = apiPrefix + path;
+  let fullPath = window.location.origin + "/" + apiPrefix + path;
   const init: RequestInit = {
     method: method ?? "GET",
     headers: { "Content-Type": "application/json" },
