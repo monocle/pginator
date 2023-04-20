@@ -1,11 +1,11 @@
-import { useContext } from "react";
-import { ServerRow, ServerTable } from "../interface";
-import OutletContext from "../common/outletContext";
+import React from "react";
+import type { ServerRow, ServerTable } from "../interface";
 import Button from "../common/components/Button";
 import Link from "../common/components/Link";
 import { useUpdateRow } from "./useRowsApi";
 import MutateRowForm from "./MutateRowForm";
 import UpdateRowSQL from "./UpdateRowSQL";
+import useOutletContext from "../common/useOutletContext";
 
 interface Props {
   table: ServerTable;
@@ -14,7 +14,7 @@ interface Props {
 }
 
 export default function Row({ table, row, onDelete }: Props) {
-  const { setOutlet } = useContext(OutletContext);
+  const { setOutlet } = useOutletContext();
   const { [table.primary_key]: id, ...rest } = row;
   const borderClassName = "border border-gray-300 px-4 dark:border-gray-700";
 

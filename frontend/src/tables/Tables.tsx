@@ -1,5 +1,5 @@
-import { useContext } from "react";
-import OutletContext from "../common/outletContext";
+import React from "react";
+import useOutletContext from "../common/useOutletContext";
 import { useGetTables } from "./useTablesApi";
 import Button from "../common/components/Button";
 import ErrorMessage from "../common/components/ErrorMessage";
@@ -7,7 +7,7 @@ import Table from "./Table";
 import CreateTableForm from "./CreateTableForm";
 
 export default function Tables() {
-  const { setOutlet } = useContext(OutletContext);
+  const { setOutlet } = useOutletContext();
   const { data, error } = useGetTables();
 
   if (!data) return null;

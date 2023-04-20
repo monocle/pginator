@@ -1,10 +1,10 @@
-import { useContext } from "react";
-import OutletContext from "./common/outletContext";
+import React from "react";
+import useOutletContext from "./common/useOutletContext";
 import Header from "./layout/Header";
 import Tables from "./tables/Tables";
 
 export default function App() {
-  const { outlet } = useContext(OutletContext);
+  const { outlet } = useOutletContext();
 
   return (
     <>

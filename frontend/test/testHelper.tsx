@@ -2,7 +2,7 @@ import React from "react";
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { OutletProvider } from "../src/common/outletContext";
+import { OutletProvider } from "../src/common/useOutletContext";
 import App from "../src/App";
 
 const queryClient = new QueryClient({

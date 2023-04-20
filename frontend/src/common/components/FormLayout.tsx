@@ -1,6 +1,6 @@
-import { useContext } from "react";
+import React from "react";
 import { ErrorResponse } from "../../interface";
-import OutletContext from "../../common/outletContext";
+import useOutletContext from "../useOutletContext";
 
 import Button from "../../common/components/Button";
 import ErrorMessage from "../../common/components/ErrorMessage";
@@ -22,7 +22,7 @@ export default function FormLayout({
   onSumbit,
   error,
 }: Props) {
-  const { resetOutlet } = useContext(OutletContext);
+  const { goBack } = useOutletContext();
 
   const handleSubit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -44,7 +44,7 @@ export default function FormLayout({
                 text="Cancel"
                 style="danger"
                 className="ml-2"
-                onClick={resetOutlet}
+                onClick={goBack}
               />
             </div>
 

@@ -1,7 +1,7 @@
 import { QueryClientProvider, QueryClient } from "@tanstack/react-query";
 import React from "react";
 import ReactDOM from "react-dom/client";
-import { OutletProvider } from "./common/outletContext";
+import { OutletProvider } from "./common/useOutletContext";
 import App from "./App";
 import "./index.css";
 

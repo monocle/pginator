@@ -1,7 +1,6 @@
-import { useContext } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { ErrorResponse } from "./interface";
-import OutletContext from "./common/outletContext";
+import type { ErrorResponse } from "./interface";
+import useOutletContext from "./common/useOutletContext";
 
 const apiPrefix = "api/v1/";
 
@@ -18,12 +17,12 @@ type QueryKey = [
   string,
   ApiPath,
   HttpMethod?,
-  Object?,
+  object?,
   Record<string, string>?
 ];
 
 async function apiQuery({ queryKey }: { queryKey: QueryKey }) {
-  const [_, path, method, body, queryParams] = queryKey;
+  const [, path, method, body, queryParams] = queryKey;
   let fullPath = window.location.origin + "/" + apiPrefix + path;
   const init: RequestInit = {
     method: method ?? "GET",
@@ -62,15 +61,15 @@ export function useApiMutation<T>(
   resetOutletOnSuccess = false
 ) {
   const queryClient = useQueryClient();
-  const { resetOutlet } = useContext(OutletContext);
+  const { goBack } = useOutletContext();
 
-  return useMutation<T, ErrorResponse, { queryKey: QueryKey }, any>({
+  return useMutation<T, ErrorResponse, { queryKey: QueryKey }, object>({
     mutationFn: apiQuery,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: queryKeyToInvalidate });
 
       if (resetOutletOnSuccess) {
-        resetOutlet();
+        goBack();
       }
     },
   });

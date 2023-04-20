@@ -1,6 +1,6 @@
-import { useContext, useEffect, useState } from "react";
-import { ServerTable, ServerRow, RowId } from "../interface";
-import OutletContext from "../common/outletContext";
+import React, { useEffect, useState } from "react";
+import type { ServerTable, ServerRow, RowId } from "../interface";
+import useOutletContext from "../common/useOutletContext";
 import ErrorMessage from "../common/components/ErrorMessage";
 import Modal from "../common/components/Modal";
 import { useGetRows, useCreateRow, useDeleteRow } from "./useRowsApi";
@@ -26,7 +26,7 @@ export default function Rows({ table }: Props) {
   const [page, setPage] = useState(0);
   const [showModal, setShowModal] = useState(false);
   const [rowIdToDelete, setRowIdToDelete] = useState<RowId>();
-  const { setOutlet } = useContext(OutletContext);
+  const { setOutlet } = useOutletContext();
   const { data, error } = useGetRows(
     table.table_name,
     page * numRowsPerFetch,

@@ -1,6 +1,6 @@
-import { useContext, useEffect, useState } from "react";
-import { ServerTable } from "../interface";
-import OutletContext from "../common/outletContext";
+import React, { useEffect, useState } from "react";
+import type { ServerTable } from "../interface";
+import useOutletContext from "../common/useOutletContext";
 import { useDeleteTable } from "./useTablesApi";
 import AlterTableForm from "./AlterTableForm";
 import Button from "../common/components/Button";
@@ -16,7 +16,7 @@ interface Props {
 
 export default function Table({ table }: Props) {
   const [showModal, setShowModal] = useState(false);
-  const { setOutlet } = useContext(OutletContext);
+  const { setOutlet } = useOutletContext();
   const { request, deleteTable } = useDeleteTable();
 
   const handleTableClick = (table: ServerTable) => {
