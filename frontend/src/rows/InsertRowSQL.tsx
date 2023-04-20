@@ -1,12 +1,13 @@
-import { RowSqlStatementProps } from "../interface";
+import React from "react";
+import type { RowSqlStatementProps } from "../interface";
 
 export default function InsertRowSQL({
   table,
   colNameFields,
 }: RowSqlStatementProps) {
-  const colNamesStr = colNameFields.map(([colName, _]) => colName).join(", ");
+  const colNamesStr = colNameFields.map(([colName]) => colName).join(", ");
   const colValuesStr = colNameFields
-    .map(([_, field]) => field.value)
+    .map(([, field]) => field.value)
     .filter((val) => val)
     .join(", ");
 

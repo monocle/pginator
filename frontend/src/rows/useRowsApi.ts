@@ -29,11 +29,7 @@ export function useCreateRow() {
 export function useUpdateRow() {
   const request = useApiMutation<ServerRow>(["rows"], true);
 
-  const mutateRow = (
-    table: ServerTable,
-    params: ServerRow,
-    id: string | number
-  ) => {
+  const mutateRow = (table: ServerTable, params: ServerRow, id: RowId) => {
     request.mutate({
       queryKey: ["rows", `rows/${table.table_name}/${id}`, "PUT", params],
     });

@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import {
+import type {
   ServerTable,
   FormField,
   ServerRow,
@@ -33,7 +33,7 @@ export default function CreateRowForm({
   const form = useForm();
 
   const colNameFields: [string, FormField][] = Object.entries(row)
-    .filter(([name, _]) => !table.primary_key || name !== table.primary_key)
+    .filter(([name]) => !table.primary_key || name !== table.primary_key)
     .map(([name, initialValue]) => [
       name,
       form.useInput({ name, initialValue }),

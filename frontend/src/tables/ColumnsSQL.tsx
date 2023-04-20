@@ -1,4 +1,5 @@
-import { ServerTableColumn, TableAction } from "../interface";
+import React from "react";
+import type { ServerTableColumn, TableAction } from "../interface";
 import Button from "../common/components/Button";
 
 interface Props {

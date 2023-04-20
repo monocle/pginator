@@ -1,3 +1,4 @@
+import React from "react";
 import { ServerTableColumn } from "../interface";
 import { columnDataTypes } from "../common/postgres";
 import {
@@ -13,7 +14,6 @@ interface Props {
   columns: ServerTableColumn[];
   validateColumns: ServerTableColumn[];
   setColumns: (columns: ServerTableColumn[]) => void;
-  [x: string]: any;
 }
 
 export default function ColumnFormFields({

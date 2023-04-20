@@ -1,15 +1,15 @@
-import { useRef, useMemo } from "react";
+import { useRef } from "react";
 import { FormField, Form, UseInputProps } from "../../interface";
 import _useInput, { defaultValidator } from "./useInput";
 
 export default function useForm(): Form {
   const fields = useRef<Record<string, FormField>>({});
   const isValid = () =>
-    Object.entries(fields.current).every(([_, field]) => field.isValid);
+    Object.entries(fields.current).every(([, field]) => field.isValid);
   const isBlank = () =>
-    Object.entries(fields.current).every(([_, field]) => field.isBlank);
+    Object.entries(fields.current).every(([, field]) => field.isBlank);
   const reset = () =>
-    Object.entries(fields.current).forEach(([_, field]) => field.reset());
+    Object.entries(fields.current).forEach(([, field]) => field.reset());
 
   const useInput = ({
     name,

@@ -1,8 +1,4 @@
-import {
-  UseQueryResult,
-  UseMutationResult,
-  QueryKey,
-} from "@tanstack/react-query";
+import { UseMutationResult } from "@tanstack/react-query";
 import React from "react";
 import { tableActions } from "./common/postgres";
 
@@ -82,7 +78,7 @@ export interface UseInputProps {
   id?: string;
 }
 
-export type UseInput = ({}: UseInputProps) => FormField;
+export type UseInput = (UseInputProps) => FormField;
 
 export interface Form {
   useInput: UseInput;
@@ -97,7 +93,12 @@ export type TableAction = (typeof tableActions)[number];
 export type RowId = string | number;
 
 export type UseMutateRow = () => {
-  request: UseMutationResult<ServerRow, ErrorResponse, any, any>;
+  request: UseMutationResult<
+    ServerRow,
+    ErrorResponse,
+    { queryKey: QueryKey },
+    object
+  >;
   mutateRow: (table: ServerTable, params: ServerRow, id: RowId) => void;
 };
 

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import { ServerTable, ServerTableColumn } from "../interface";
 import { useCreateTable } from "./useTablesApi";
 import useForm from "../common/form/useForm";
@@ -9,7 +9,6 @@ import Button from "../common/components/Button";
 import NewColumnFields from "./NewColumnFields";
 import ColumnsSQL from "./ColumnsSQL";
 import Checkbox from "../common/components/Checkbox";
-
 interface Props {
   tables: ServerTable[];
 }

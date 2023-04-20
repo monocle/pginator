@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { ServerTable, ServerTableColumn, TableAction } from "../interface";
+import React, { useState } from "react";
+import type { ServerTable, ServerTableColumn, TableAction } from "../interface";
 import { tableActions } from "../common/postgres";
 import useForm from "../common/form/useForm";
 import { isValidTableAction } from "../common/validators";

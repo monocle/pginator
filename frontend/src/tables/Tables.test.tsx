@@ -3,14 +3,15 @@ import { setup } from "../../test/testHelper";
 
 it("renders add table button and triggers onClick", async () => {
   const { user, screen } = setup();
-  let addButton: HTMLButtonElement;
+  let addButton: HTMLElement | undefined = undefined;
 
   await waitFor(() => {
     addButton = screen.getByRole("button", { name: "+" });
   });
 
-  // @ts-ignore
-  await user.click(addButton);
+  if (addButton) {
+    await user.click(addButton);
+  }
 
   expect(screen.queryByText("Create A New Table")).toBeInTheDocument();
 });

@@ -1,4 +1,5 @@
-import { RowSqlStatementProps } from "../interface";
+import React from "react";
+import type { RowSqlStatementProps } from "../interface";
 
 export default function InsertRowSQL({
   table,
@@ -6,13 +7,13 @@ export default function InsertRowSQL({
   colNameFields,
 }: RowSqlStatementProps) {
   const colNamesFieldsNoPrimaryKey = colNameFields.filter(
-    ([colName, _]) => colName !== table.primary_key
+    ([colName]) => colName !== table.primary_key
   );
   const colNamesStr = colNamesFieldsNoPrimaryKey
-    .map(([colName, _]) => colName)
+    .map(([colName]) => colName)
     .join(", ");
   const colValuesStr = colNamesFieldsNoPrimaryKey
-    .map(([_, input]) => input.value)
+    .map(([, input]) => input.value)
     .filter((val) => val)
     .join(", ");
 
@@ -26,7 +27,7 @@ export default function InsertRowSQL({
         <code className="block">&nbsp;&nbsp;({colValuesStr})</code>
       )}
       <code className="block">
-        WHERE {table.primary_key} = '{row[table.primary_key]}';
+        WHERE {table.primary_key} = &apos;{row[table.primary_key]}&apos;;
       </code>
     </div>
   );

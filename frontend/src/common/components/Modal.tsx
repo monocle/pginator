@@ -1,4 +1,5 @@
-import { ButtonStyle } from "../../interface";
+import React from "react";
+import type { ButtonStyle } from "../../interface";
 import Button from "./Button";
 
 interface Props {

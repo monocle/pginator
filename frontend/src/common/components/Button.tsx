@@ -29,12 +29,11 @@ type ButtonProps = {
   type?: "button" | "submit" | "reset";
   style?: ButtonStyle;
   isLoading?: boolean;
-  [x: string]: any;
 };
 
 export default function Button({
   text,
-  onClick = () => {},
+  onClick,
   disabled = false,
   className = "",
   type = "button",
@@ -42,9 +41,9 @@ export default function Button({
   isLoading = false,
   ...rest
 }: ButtonProps) {
+  const disabledStyle = "opacity-50 cursor-not-allowed ";
   let buttonStyle =
     "py-1 px-3 font-semibold rounded-sm transition-all duration-200 text-sm shadow-md ";
-  let disabledStyle = "opacity-50 cursor-not-allowed ";
 
   switch (style) {
     case "primary":

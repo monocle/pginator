@@ -1,3 +1,5 @@
+import React from "react";
+
 type PopoverPosition = "right" | "left" | "top" | "bottom";
 
 interface Props {

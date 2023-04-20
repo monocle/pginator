@@ -1,3 +1,4 @@
+import React from "react";
 import { ServerValidationError, ErrorResponse } from "../../interface";
 
 const makeErrorMsg = (e: ServerValidationError): string => `${e.loc}: ${e.msg}`;
@@ -10,7 +11,7 @@ export default function ErrorMessage({ errorResponse }: Props) {
   if (!errorResponse) return null;
 
   const error = errorResponse.error;
-  let errorMessage: string = "An error occurred: ";
+  let errorMessage = "An error occurred: ";
 
   if (typeof error === "string") {
     errorMessage += error;

@@ -11,8 +11,7 @@ interface Props {
   value: string;
   isValid: boolean;
   errorMessage: string;
-  onChange: (value: string) => void;
-  [x: string]: any;
+  onChange?: (value: string) => void;
 }
 
 let idNum = 0;
@@ -25,7 +24,7 @@ export default function Input({
   value,
   isValid,
   errorMessage,
-  onChange = () => {},
+  onChange,
   ...rest
 }: Props) {
   const inputErrorId = "input-error-" + idNum++;
@@ -35,7 +34,7 @@ export default function Input({
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const newValue = event.target.value;
     setHasInteracted(newValue !== "");
-    onChange(newValue);
+    if (onChange) onChange(newValue);
   };
 
   useEffect(() => {

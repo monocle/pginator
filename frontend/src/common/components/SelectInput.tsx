@@ -1,3 +1,5 @@
+import React from "react";
+
 interface Props {
   labelText: string;
   options: string[];
@@ -5,7 +7,6 @@ interface Props {
   value: string;
   className?: string;
   onChange: (value: string) => void;
-  [x: string]: any;
 }
 
 export default function SelectInput({
