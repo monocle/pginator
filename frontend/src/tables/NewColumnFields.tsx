@@ -1,5 +1,5 @@
 import React from "react";
-import { ServerTableColumn } from "../interface";
+import type { ServerTableColumn } from "../interface";
 import { columnDataTypes } from "../common/postgres";
 import {
   isValidTableColumnName,
@@ -11,16 +11,17 @@ import SelectInput from "../common/components/SelectInput";
 import useForm from "../common/form/useForm";
 
 interface Props {
+  className: string;
   columns: ServerTableColumn[];
   validateColumns: ServerTableColumn[];
   setColumns: (columns: ServerTableColumn[]) => void;
 }
 
 export default function ColumnFormFields({
+  className = "",
   columns,
   validateColumns,
   setColumns,
-  ...rest
 }: Props) {
   const optionForManualType = "Type in a data type";
   const form = useForm();
@@ -58,7 +59,7 @@ export default function ColumnFormFields({
   };
 
   return (
-    <fieldset {...rest}>
+    <fieldset className={className}>
       <Input
         labelText="Column Name"
         className="mb-4"
@@ -67,7 +68,7 @@ export default function ColumnFormFields({
 
       <fieldset className="mb-4">
         <SelectInput
-          labelText="Colum Data Type"
+          labelText="Column Data Type"
           prompt="Select A Data Type"
           className="mb-4"
           value={selectedDataType.value}

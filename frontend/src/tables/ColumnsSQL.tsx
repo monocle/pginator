@@ -22,6 +22,7 @@ export default function ColumnsSQL({ columns, action, onRemoveColumn }: Props) {
           <Button
             text="X"
             style="danger"
+            dataTestId={`remove-column-${column.name}`}
             onClick={() => onRemoveColumn(column.name)}
           />
         </div>

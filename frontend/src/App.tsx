@@ -10,7 +10,10 @@ export default function App() {
     <>
       <Header />
       <div className="container mx-auto flex max-w-screen-xl bg-gray-100 px-6 pt-6 dark:bg-gray-900">
-        <div className="h-screen w-3/12 overflow-y-scroll pr-2">
+        <div
+          className="h-screen w-3/12 overflow-y-scroll pr-2"
+          data-testid="app-layout-left-column"
+        >
           <Tables />
         </div>
         <div className="ml-4 h-screen w-9/12 overflow-y-scroll rounded-md bg-white p-6 shadow dark:bg-gray-800">

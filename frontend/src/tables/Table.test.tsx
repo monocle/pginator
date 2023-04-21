@@ -1,56 +1,54 @@
-import { waitFor, waitForElementToBeRemoved } from "@testing-library/react";
-import { setup, clickButton } from "../../test/testHelper";
+import { waitFor } from "@testing-library/react";
+import {
+  setup,
+  expectInDocument,
+  expectNotInDocument,
+} from "../../test/testHelper";
 import { mockTables } from "../mocks/handlers";
 
 describe("Table component", () => {
   it("renders Edit button and triggers onClick", async () => {
-    const { user, screen } = setup();
+    const { d } = await setup();
     const regex = new RegExp(
       `editing the "${mockTables[0].table_name}" table`,
       "i"
     );
 
-    await clickButton("Edit", user);
-    expect(screen.getByText(regex)).toBeInTheDocument();
+    await d.clickButton("Edit");
+    expectInDocument(regex);
   });
 
   it("renders delete button and shows the modal", async () => {
-    const { user, screen } = setup();
+    const { d } = await setup();
 
-    await clickButton("X", user);
-    expect(screen.getByText(/permanently delete table/i)).toBeInTheDocument();
+    await d.clickButton("X");
+    expectInDocument(/permanently delete table/i);
   });
 
   it("handles modal confirm action", async () => {
-    const { user, screen } = setup();
+    const { d } = await setup();
     const firstTableName = mockTables[0].table_name;
 
-    expect(screen.getByText(firstTableName)).toBeInTheDocument();
+    await d.clickButton("X");
+    await d.clickButton("Drop Table");
 
-    await clickButton("X", user);
-    await clickButton("Drop Table", user);
-
-    expect(
-      screen.queryByText(/permanently delete table/i)
-    ).not.toBeInTheDocument();
+    expectNotInDocument(/permanently delete table/i);
 
     await waitFor(() => {
-      expect(screen.queryByText(firstTableName)).not.toBeInTheDocument();
+      expectNotInDocument(firstTableName);
     });
   });
 
   it("handles modal cancel action", async () => {
-    const { user, screen } = setup();
+    const { d } = await setup();
     const firstTableName = mockTables[0].table_name;
 
-    expect(screen.getByText(firstTableName)).toBeInTheDocument();
+    expectInDocument(firstTableName);
 
-    await clickButton("X", user);
-    await clickButton("Cancel", user);
+    await d.clickButton("X");
+    await d.clickButton("Cancel");
 
-    expect(screen.getByText(firstTableName)).toBeInTheDocument();
-    expect(
-      screen.queryByText(/permanently delete table/i)
-    ).not.toBeInTheDocument();
+    expectInDocument(firstTableName);
+    expectNotInDocument(/permanently delete table/i);
   });
 });

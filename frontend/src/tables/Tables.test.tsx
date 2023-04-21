@@ -1,8 +1,8 @@
-import { setup, clickButton } from "../../test/testHelper";
+import { setup, expectInDocument } from "../../test/testHelper";
 
 it("renders add table button and triggers onClick", async () => {
-  const { user, screen } = setup();
+  const { d } = await setup();
 
-  await clickButton("+", user);
-  expect(screen.queryByText("Create A New Table")).toBeInTheDocument();
+  await d.clickButton("+");
+  expectInDocument("Create A New Table");
 });

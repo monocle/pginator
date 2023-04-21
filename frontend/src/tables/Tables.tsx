@@ -10,8 +10,6 @@ export default function Tables() {
   const { setOutlet } = useOutletContext();
   const { data, error } = useGetTables();
 
-  if (!data) return null;
-
   return (
     <div>
       <div className="mb-4 flex gap-4">
@@ -20,15 +18,19 @@ export default function Tables() {
           <Button
             text="+"
             className="px-2 text-sm"
-            onClick={() => setOutlet(<CreateTableForm tables={data.tables} />)}
+            onClick={() =>
+              setOutlet(<CreateTableForm tables={data?.tables ?? []} />)
+            }
           />
         </div>
       </div>
-      <ul className="grid list-none grid-cols-1">
-        {data.tables.map((table) => (
-          <Table table={table} key={table.table_name} />
-        ))}
-      </ul>
+      {data && (
+        <ul className="grid list-none grid-cols-1">
+          {data.tables.map((table) => (
+            <Table table={table} key={table.table_name} />
+          ))}
+        </ul>
+      )}
       <ErrorMessage errorResponse={error} />
     </div>
   );

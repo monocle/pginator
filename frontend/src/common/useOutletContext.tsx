@@ -22,7 +22,7 @@ export function OutletProvider({ children }: { children: ReactNode }) {
   const goBack = () => {
     const newStack = componentStack.slice(0, -1);
 
-    if (newStack.length > 0) {
+    if (newStack.length >= 0) {
       const prevComponent = newStack.at(-1);
 
       setOutletState(prevComponent ?? null);

@@ -3,7 +3,11 @@ import { ButtonStyle } from "../../interface";
 
 function Spinner() {
   return (
-    <svg className="... mr-3 h-5 w-5 animate-spin" viewBox="0 0 24 24">
+    <svg
+      className="... mr-3 h-5 w-5 animate-spin"
+      aria-label="loading spinner"
+      viewBox="0 0 24 24"
+    >
       <circle
         className="opacity-25"
         cx="12"
@@ -23,12 +27,13 @@ function Spinner() {
 
 type ButtonProps = {
   text: string | React.ReactNode;
-  onClick?: React.MouseEventHandler<HTMLButtonElement>;
   disabled?: boolean;
   className?: string;
   type?: "button" | "submit" | "reset";
   style?: ButtonStyle;
   isLoading?: boolean;
+  dataTestId?: string;
+  onClick?: React.MouseEventHandler<HTMLButtonElement>;
 };
 
 export default function Button({
@@ -39,6 +44,7 @@ export default function Button({
   type = "button",
   style = "primary",
   isLoading = false,
+  dataTestId = "",
   ...rest
 }: ButtonProps) {
   const disabledStyle = "opacity-50 cursor-not-allowed ";
@@ -77,11 +83,11 @@ export default function Button({
       className={`${buttonStyle} ${disabled ? disabledStyle : ""} ${className}`}
       type={type}
       disabled={disabled}
+      data-testid={dataTestId}
       onClick={onClick}
       {...rest}
     >
-      {isLoading ? <Spinner /> : null}
-      {text}
+      {isLoading ? <Spinner /> : text}
     </button>
   );
 }

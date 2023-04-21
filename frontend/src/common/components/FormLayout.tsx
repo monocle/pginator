@@ -51,7 +51,12 @@ export default function FormLayout({
             <ErrorMessage errorResponse={error} />
           </div>
 
-          <div className="mb-4 pl-6 md:w-6/12">{rightColumn}</div>
+          <div
+            className="mb-4 pl-6 md:w-6/12"
+            data-testid="form-layout-right-column"
+          >
+            {rightColumn}
+          </div>
         </div>
       </form>
     </div>
