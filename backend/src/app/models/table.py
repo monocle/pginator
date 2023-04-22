@@ -89,7 +89,13 @@ class Table:
     def drop(table_name: str) -> None:
         DB().execute(SQL("DROP TABLE {}").format(Identifier(table_name)))
 
-    def __init__(self, request_dict: dict | None, is_update_request=False) -> None:
+    def __init__(
+        self,
+        request_dict: dict | None,
+        table_name: str | None = None,
+        is_update_request=False,
+    ) -> None:
+        self.table_name = table_name
         self.request_dict = request_dict or {}
         self._is_update_request = is_update_request
         self._errors: list["ErrorDict"] = []
@@ -99,7 +105,9 @@ class Table:
     def validate(self):
         try:
             if self._is_update_request:
-                self.request = TableUpdateRequest(**self.request_dict)
+                self.request = TableUpdateRequest(
+                    table_name=self.table_name, **self.request_dict  # type: ignore
+                )
             else:
                 self.request = TableCreateRequest(**self.request_dict)
         except ValidationError as e:
@@ -127,13 +135,14 @@ class Table:
         return None
 
     def update(self) -> bool:
-        if self.valid:
+        if self.valid and isinstance(self.request, TableUpdateRequest):
+            table_name = self.request.table_name
             action = self.request_dict["action"]
             remaining_sql = self.request_dict["remaining_sql"]
             base_sql_str = "ALTER TABLE {name} {action} {remaining_sql}"
 
             sql = SQL(base_sql_str).format(
-                name=Identifier(self.request.table_name),
+                name=Identifier(table_name),
                 action=SQL(action),
                 remaining_sql=SQL(remaining_sql),
             )

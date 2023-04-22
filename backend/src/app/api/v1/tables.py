@@ -33,9 +33,9 @@ def create_table():
     return {"error": table.errors}, 400
 
 
-@tables_bp.route("/", methods=["PUT"])
-def update_table():
-    table = Table(request.json, is_update_request=True)
+@tables_bp.route("/<string:table_name>", methods=["PUT"])
+def update_table(table_name: str):
+    table = Table(request.json, table_name=table_name, is_update_request=True)
 
     if table.valid and table.update():
         return "", 204

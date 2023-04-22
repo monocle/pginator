@@ -106,11 +106,11 @@ def test_create_endpoint(
 
 
 @pytest.mark.parametrize(
-    "request_json, expected_status_code, expected_response",
+    "table_name, request_json, expected_status_code, expected_response",
     [
         (
+            "foo",
             {
-                "table_name": "foo",
                 "action": "add",
                 "remaining_sql": "new_col circle",
             },
@@ -118,35 +118,31 @@ def test_create_endpoint(
             None,
         ),
         (
-            {"action": "add", "remaining_sql": "new_col circle"},
-            400,
-            {
-                "error": [
-                    {
-                        "loc": ["table_name"],
-                        "msg": "field required",
-                        "type": "value_error.missing",
-                    }
-                ]
-            },
-        ),
-        (
-            {"table_name": "foo", "action": "nope", "remaining_sql": "n c"},
+            "foo",
+            {"action": "nope", "remaining_sql": "n c"},
             400,
             {
                 "error": 'syntax error at or near "nope"\nLINE 1: ALTER TABLE "foo" nope n c\n                          ^'
             },
         ),
+        ("", {"action": "add", "remaining_sql": "new_col circle"}, 405, None),
+        (
+            "Nope",
+            {"action": "add", "remaining_sql": "new_col circle"},
+            400,
+            {"error": 'relation "Nope" does not exist'},
+        ),
     ],
 )
 def test_update_endpoint(
     client_factory: ClientFactory,
+    table_name: str,
     request_json: dict,
     expected_status_code: int,
     expected_response: dict,
 ):
     client = client_factory(True)
-    res = client.put("/api/v1/tables/", json=request_json)
+    res = client.put(f"/api/v1/tables/{table_name}", json=request_json)
     data = res.get_json()
 
     assert res.status_code == expected_status_code

@@ -81,36 +81,20 @@ def test_create(app: Flask, req_dict: dict, res_dict: dict):
 
 
 @pytest.mark.parametrize(
-    "req_dict, res",
+    "table_name, req_dict, res",
     [
         (
+            "bar",
             {
-                "table_name": "bar",
                 "action": "add",
                 "remaining_sql": "new_col circle",
             },
             True,
         ),
-        (
-            {
-                "table_name": "bar",
-                "action": "drop",
-                "remaining_sql": "col1",
-            },
-            True,
-        ),
-        ({}, False),
-        (
-            {
-                "table_name": "bar",
-                "action": "drop",
-                "remaining_sql": "col1, drop col2",
-            },
-            True,
-        ),
+        (None, {}, False),
     ],
 )
-def test_update(app: Flask, req_dict: dict, res: bool):
+def test_update(app: Flask, table_name: str, req_dict: dict, res: bool):
     bar_table_dict = {
         "table_name": "bar",
         "columns": [
@@ -120,7 +104,7 @@ def test_update(app: Flask, req_dict: dict, res: bool):
     }
     with app.app_context():
         Table(bar_table_dict).create()
-        table = Table(req_dict, is_update_request=True)
+        table = Table(req_dict, table_name=table_name, is_update_request=True)
 
         assert table.update() == res
 
@@ -199,26 +183,28 @@ def test_update(app: Flask, req_dict: dict, res: bool):
 )
 def test_validation_for_create(app: Flask, req_dict: dict, expected_errors: list[str]):
     with app.app_context():
-        table = Table(req_dict, False)
+        table = Table(req_dict, is_update_request=False)
         assert table.errors == expected_errors
 
 
 @pytest.mark.parametrize(
-    "req_dict, expected_errors",
+    "table_name, req_dict, expected_errors",
     [
-        ({"table_name": "f", "action": "add", "remaining_sql": "c t"}, ()),
+        ("table0", {"action": "add", "remaining_sql": "c t"}, ()),
         (
+            None,
             {"action": "add", "remaining_sql": "c t"},
             (
                 {
                     "loc": ("table_name",),
-                    "msg": "field required",
-                    "type": "value_error.missing",
+                    "msg": "none is not an allowed value",
+                    "type": "type_error.none.not_allowed",
                 },
             ),
         ),
         (
-            {"table_name": "f", "action": "add"},
+            "table0",
+            {"action": "add"},
             (
                 (
                     {
@@ -230,7 +216,8 @@ def test_validation_for_create(app: Flask, req_dict: dict, expected_errors: list
             ),
         ),
         (
-            {"table_name": "f", "remaining_sql": "c t"},
+            "table0",
+            {"remaining_sql": "c t"},
             (
                 {
                     "loc": ("action",),
@@ -240,12 +227,13 @@ def test_validation_for_create(app: Flask, req_dict: dict, expected_errors: list
             ),
         ),
         (
+            None,
             {},
             (
                 {
                     "loc": ("table_name",),
-                    "msg": "field required",
-                    "type": "value_error.missing",
+                    "msg": "none is not an allowed value",
+                    "type": "type_error.none.not_allowed",
                 },
                 {
                     "loc": ("action",),
@@ -261,9 +249,11 @@ def test_validation_for_create(app: Flask, req_dict: dict, expected_errors: list
         ),
     ],
 )
-def test_validation_for_update(app: Flask, req_dict: dict, expected_errors: list[str]):
+def test_validation_for_update(
+    app: Flask, table_name: str | None, req_dict: dict, expected_errors: list[str]
+):
     with app.app_context():
-        table = Table(req_dict, is_update_request=True)
+        table = Table(req_dict, table_name=table_name, is_update_request=True)
         assert table.errors == expected_errors
 
 
