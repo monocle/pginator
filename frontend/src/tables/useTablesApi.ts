@@ -50,9 +50,9 @@ export function useUpdateTable() {
     request.mutate({
       queryKey: [
         "tables",
-        "tables",
+        `tables/${tableName}`,
         "PUT",
-        { table_name: tableName, action, remaining_sql: remainingSql },
+        { action, remaining_sql: remainingSql },
       ],
     });
   };
