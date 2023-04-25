@@ -1,6 +1,6 @@
 import { renderHook, act } from "@testing-library/react";
+import type { FormValidator } from "../../interface";
 import useForm from "./useForm";
-import { FormValidator } from "../../interface";
 
 const customValidator: FormValidator = (value) => {
   const isValid = value.length >= 3;

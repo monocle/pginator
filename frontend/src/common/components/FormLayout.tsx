@@ -1,5 +1,5 @@
 import React from "react";
-import { ErrorResponse } from "../../interface";
+import type { ErrorResponse } from "../../interface";
 import useOutletContext from "../useOutletContext";
 
 import Button from "../../common/components/Button";

@@ -1,4 +1,4 @@
-import {
+import type {
   ServerTables,
   ServerTableColumn,
   ServerTable,

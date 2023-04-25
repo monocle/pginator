@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { FormValidator, UseInputProps } from "../../interface";
+import type { FormValidator, UseInputProps } from "../../interface";
 
 function generateUniqueId(): string {
   return `${Date.now()}-${Math.floor(Math.random() * 1000000)}`;

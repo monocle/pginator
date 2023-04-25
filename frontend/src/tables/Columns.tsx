@@ -1,5 +1,5 @@
 import React from "react";
-import { ServerTableColumn } from "../interface";
+import type { ServerTableColumn } from "../interface";
 
 interface Props {
   columns: ServerTableColumn[];

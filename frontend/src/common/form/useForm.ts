@@ -1,5 +1,5 @@
 import { useRef } from "react";
-import { FormField, Form, UseInputProps } from "../../interface";
+import type { FormField, Form, UseInputProps } from "../../interface";
 import _useInput, { defaultValidator } from "./useInput";
 
 export default function useForm(): Form {

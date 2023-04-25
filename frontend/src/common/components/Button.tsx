@@ -1,5 +1,5 @@
 import React from "react";
-import { ButtonStyle } from "../../interface";
+import type { ButtonStyle } from "../../interface";
 
 function Spinner() {
   return (

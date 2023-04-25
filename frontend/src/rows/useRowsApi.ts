@@ -1,4 +1,4 @@
-import { ServerRows, ServerRow, ServerTable, RowId } from "../interface";
+import type { ServerRows, ServerRow, ServerTable, RowId } from "../interface";
 import { useGetRequest, useApiMutation } from "../useApi";
 
 export function useGetRows(tableName: string, offset: number, orderBy: string) {

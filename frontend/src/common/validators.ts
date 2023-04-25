@@ -1,4 +1,8 @@
-import { FormValidator, ServerTable, ServerTableColumn } from "../interface";
+import type {
+  FormValidator,
+  ServerTable,
+  ServerTableColumn,
+} from "../interface";
 import {
   reservedWords,
   tableActions,

@@ -1,5 +1,5 @@
 import React from "react";
-import { ServerValidationError, ErrorResponse } from "../../interface";
+import type { ServerValidationError, ErrorResponse } from "../../interface";
 
 const makeErrorMsg = (e: ServerValidationError): string => `${e.loc}: ${e.msg}`;
 
