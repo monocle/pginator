@@ -58,3 +58,10 @@ export const isValidTableAction: FormValidator = (value: string) => {
 
   return { isValid, errorMessage };
 };
+
+export const isNotBlank: FormValidator = (value: string) => {
+  const errorMessage = "Fields cannot be blank";
+  const isValid = !!value.trim();
+
+  return { isValid, errorMessage };
+};

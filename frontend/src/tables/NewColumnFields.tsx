@@ -11,7 +11,7 @@ import SelectInput from "../common/components/SelectInput";
 import useForm from "../common/form/useForm";
 
 interface Props {
-  className: string;
+  className?: string;
   columns: ServerTableColumn[];
   validateColumns: ServerTableColumn[];
   setColumns: (columns: ServerTableColumn[]) => void;

@@ -21,7 +21,7 @@ async function fillInCompleteForm(tableName = "my_table") {
 
   await d.fillIn({ label: /table name/i, value: tableName });
   await d.fillIn({ label: /column name/i, value: "my_col_name" });
-  await d.selectOption({ label: /data type/i, option: /text/i });
+  await d.selectOption({ label: "Column Data Type", option: /text/i });
   await d.fillIn({ label: /modify/i, value: "foo" });
   await d.clickButton("Add Column");
   return { d, user };

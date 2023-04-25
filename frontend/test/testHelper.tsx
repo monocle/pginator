@@ -8,6 +8,35 @@ import { OutletProvider } from "../src/common/useOutletContext";
 import App from "../src/App";
 import { mockTables } from "../src/mocks/handlers";
 
+interface ClickElementOptions {
+  user: UserEvent;
+  testId?: string;
+  idx?: number;
+  role: "button" | "link";
+  name?: ButtonName | LinkName;
+}
+
+type LinkName = string | RegExp;
+
+type ButtonName =
+  | "+"
+  | "X"
+  | "Cancel"
+  | "Edit"
+  | "Add Column"
+  | "Create Table"
+  | "Update Table"
+  | "Drop Table";
+
+type SelectLabel = "Column Data Type" | "Alter Action";
+
+interface SelectOptionOptions {
+  label: SelectLabel | RegExp;
+  option: string | RegExp;
+  user: UserEvent;
+  screen: Screen;
+}
+
 export { screen };
 
 export function expectInDocument(
@@ -34,26 +63,8 @@ export function expectButtonToBeDisabled(name: ButtonName) {
   expect(screen.getByRole("button", { name })).toBeDisabled();
 }
 
-type ButtonName =
-  | "+"
-  | "X"
-  | "Cancel"
-  | "Edit"
-  | "Add Column"
-  | "Create Table"
-  | "Drop Table";
-
-interface ClickButtonOptions {
-  user: UserEvent;
-  testId?: string;
-  idx?: number;
-}
-
-export async function clickButton(
-  name: ButtonName,
-  options: ClickButtonOptions
-) {
-  const { testId, user, idx = 0 } = options;
+export async function clickElement(options: ClickElementOptions) {
+  const { name, testId, user, idx = 0, role } = options;
 
   if (!name && !testId) {
     throw new Error("Either 'name' or 'testId' should be provided.");
@@ -63,9 +74,23 @@ export async function clickButton(
     if (testId) {
       await user.click(screen.getByTestId(testId));
     } else if (name) {
-      await user.click(screen.getAllByRole("button", { name })[idx]);
+      await user.click(screen.getAllByRole(role, { name })[idx]);
     }
   });
+}
+
+export async function clickButton(
+  name: ButtonName,
+  options: Omit<ClickElementOptions, "role" | "name">
+) {
+  await clickElement({ ...options, role: "button", name });
+}
+
+export async function clickLink(
+  name: LinkName,
+  options: Omit<ClickElementOptions, "role" | "name">
+) {
+  await clickElement({ ...options, role: "link", name });
 }
 
 interface FillInOptions {
@@ -78,13 +103,6 @@ interface FillInOptions {
 export async function fillIn({ label, value, user, screen }: FillInOptions) {
   await user.click(screen.getByLabelText(label));
   await user.keyboard(value);
-}
-
-interface SelectOptionOptions {
-  label: string | RegExp;
-  option: string | RegExp;
-  user: UserEvent;
-  screen: Screen;
 }
 
 export async function selectOption({
@@ -118,8 +136,13 @@ export async function setup(component = <App />) {
   const d = {
     clickButton: (
       name: ButtonName,
-      options?: Omit<ClickButtonOptions, "user" | "screen">
+      options?: Omit<ClickElementOptions, "user" | "screen" | "role" | "name">
     ) => clickButton(name, { ...options, user }),
+
+    clickLink: (
+      name: LinkName,
+      options?: Omit<ClickElementOptions, "user" | "screen" | "role" | "name">
+    ) => clickLink(name, { ...options, user }),
 
     fillIn: (options: Omit<FillInOptions, "user" | "screen">) =>
       fillIn({ ...options, user, screen }),

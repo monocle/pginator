@@ -32,7 +32,7 @@ export const handlers = [
     const table = await req.json();
 
     table.primary_key = "id";
-    mockTables = [...mockTables, table];
+    mockTables.push(table);
 
     if (table.table_name === "error400") {
       return res(ctx.status(400), ctx.json({ error: "post error" }));
@@ -42,6 +42,38 @@ export const handlers = [
       ctx.delay(table.table_name === "long_delay" ? 1000 : 0),
       ctx.status(201),
       ctx.json(table)
+    );
+  }),
+
+  rest.put("api/v1/tables/:tableName", async (req, res, ctx) => {
+    const { tableName } = req.params;
+    const props = await req.json();
+
+    const table = mockTables.find((table) => table.table_name === tableName);
+
+    if (!table) {
+      return res(
+        ctx.status(400),
+        ctx.json({
+          error: {
+            loc: ["table_name"],
+            msg: "none is not an allowed value",
+            type: "type_error.none.not_allowed",
+          },
+        })
+      );
+    }
+
+    if (props.action === "ADD") {
+      const split = props.remaining_sql.split(/\s+/);
+
+      table.columns.push({ name: split[0], data_type: split[1] });
+      return res(ctx.status(200), ctx.json(table));
+    }
+
+    return res(
+      ctx.status(400),
+      ctx.json({ error: "put error: action not handled" })
     );
   }),
 

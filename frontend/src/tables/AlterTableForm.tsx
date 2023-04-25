@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import type { ServerTable, ServerTableColumn, TableAction } from "../interface";
 import { tableActions } from "../common/postgres";
 import useForm from "../common/form/useForm";
-import { isValidTableAction } from "../common/validators";
+import { isValidTableAction, isNotBlank } from "../common/validators";
 import FormLayout from "../common/components/FormLayout";
 import Button from "../common/components/Button";
 import Input from "../common/components/Input";
@@ -27,7 +27,10 @@ export default function AlterTableForm({ table }: Props) {
     name: "sqlAction",
     validator: isValidTableAction,
   });
-  const remainingSql = form.useInput({ name: "remainingSql" });
+  const remainingSql = form.useInput({
+    name: "remainingSql",
+    validator: isNotBlank,
+  });
   const [columns, setColumns] = useState<ServerTableColumn[]>([]);
 
   const createColumnsSql = (_columns: ServerTableColumn[]) => {
