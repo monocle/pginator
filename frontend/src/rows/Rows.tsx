@@ -79,7 +79,7 @@ export default function Rows({ table }: Props) {
 
   return (
     <div>
-      <header className="mb-4 flex items-center justify-between">
+      <header className="mb-4 flex items-center justify-between ">
         <div className="flex gap-8">
           <h2 className="heading-2 mb-4">{table.table_name}</h2>
           <div>
@@ -107,13 +107,13 @@ export default function Rows({ table }: Props) {
       </header>
 
       {data?.rows && (
-        <table className="w-full table-auto border-collapse border border-gray-500 dark:border-gray-400">
+        <table className="w-full table-auto border-collapse border border-gray-500 bg-gray-100 pb-4 dark:border-gray-400 dark:bg-gray-900">
           <thead>
-            <tr>
+            <tr className="bg-gray-200 dark:bg-gray-900">
               {headers.map((header) => (
                 <th
                   key={header}
-                  className="border border-gray-300 bg-gray-200 px-4 py-1 text-left dark:border-gray-700 dark:bg-gray-800"
+                  className="border border-gray-300 px-4 py-1 pb-4 text-left dark:border-gray-700"
                 >
                   {header}
                 </th>
