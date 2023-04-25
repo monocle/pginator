@@ -11,19 +11,23 @@ export default function Tables() {
   const { data, error } = useGetTables();
 
   return (
-    <div>
-      <div className="mb-4 flex gap-4">
-        <h2 className="heading-2">Tables</h2>
-        <div>
-          <Button
-            text="+"
-            className="px-2 text-sm"
-            onClick={() =>
-              setOutlet(<CreateTableForm tables={data?.tables ?? []} />)
-            }
-          />
+    <>
+      <header className="sticky top-0 z-10 bg-white pb-4 dark:bg-gray-900">
+        <div className="flex gap-4">
+          <h2 className="heading-2">Tables</h2>
+          <div>
+            <Button
+              text="+"
+              className="px-2 text-sm"
+              onClick={() =>
+                setOutlet(<CreateTableForm tables={data?.tables ?? []} />)
+              }
+            />
+          </div>
         </div>
-      </div>
+        <ErrorMessage errorResponse={error} />
+      </header>
+
       {data && (
         <ul className="grid list-none grid-cols-1">
           {data.tables.map((table) => (
@@ -31,7 +35,6 @@ export default function Tables() {
           ))}
         </ul>
       )}
-      <ErrorMessage errorResponse={error} />
-    </div>
+    </>
   );
 }

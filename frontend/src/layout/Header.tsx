@@ -5,7 +5,7 @@ export default function Header() {
   const numFetching = useIsFetching();
 
   return (
-    <header className="font-heading">
+    <header className="h-7 font-heading">
       <nav className="flex w-full justify-between px-4 py-1">
         <div className="flex text-sm font-semibold text-white">PGinator</div>
         <div className="flex items-center">

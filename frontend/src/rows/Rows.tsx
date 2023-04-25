@@ -79,9 +79,9 @@ export default function Rows({ table }: Props) {
 
   return (
     <div>
-      <div className="mb-4 flex items-center justify-between">
+      <header className="mb-4 flex items-center justify-between">
         <div className="flex gap-8">
-          <h2 className="heading-2 mb-4">Table: {table.table_name}</h2>
+          <h2 className="heading-2 mb-4">{table.table_name}</h2>
           <div>
             <button
               className="mr-2 rounded-md bg-blue-500 px-4 py-2 text-white disabled:opacity-50"
@@ -104,7 +104,7 @@ export default function Rows({ table }: Props) {
             Create New Row
           </a>
         </div>
-      </div>
+      </header>
 
       {data?.rows && (
         <table className="w-full table-auto border-collapse border border-gray-500 dark:border-gray-400">
