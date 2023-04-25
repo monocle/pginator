@@ -65,6 +65,9 @@ frontend_shell:
 frontend_test:
 	docker exec -it $(PROJ_NAME)-$(FRONTEND)-1 npm run test
 
+frontend_test_cov:
+	docker exec -it $(PROJ_NAME)-$(FRONTEND)-1 npm run coverage
+
 frontend_tsc:
 	docker exec -it $(PROJ_NAME)-$(FRONTEND)-1 npx tsc
 
