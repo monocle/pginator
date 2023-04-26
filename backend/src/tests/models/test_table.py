@@ -1,35 +1,34 @@
 from typing import Iterator
 
 import pytest
-from app.models.table import Table
+from app.models import table
+from app.models.table import QueryParams, TableCreateRequest, TableUpdateRequest
 from flask import Flask
 from psycopg.errors import UndefinedTable
-from tests.fixtures import app_factory
+from tests.fixtures import app_factory, app_with_tables
 
 
 @pytest.fixture
-def app(app_factory) -> Iterator[Flask]:
-    return app_factory()
+def app(app_factory) -> Iterator:
+    app = app_factory()
+    with app.app_context():
+        yield
 
 
 @pytest.mark.parametrize(
     "params, expected_len, expected_table_name",
     [
-        (None, 10, "table-00"),
+        ({}, 10, "table-00"),
         ({"limit": 3}, 3, "table-00"),
         ({"limit": 1, "offset": 2}, 1, "table-02"),
     ],
 )
-def test_table_all_query_params(app_factory, params, expected_len, expected_table_name):
-    sql = " ".join(
-        [f'CREATE TABLE "table-{str(i).zfill(2)}" (value text);' for i in range(0, 11)]
-    )
-    app = app_factory(sql)
-
-    with app.app_context():
-        tables = Table.all(params)
-        assert len(tables) == expected_len
-        assert tables[0]["table_name"] == expected_table_name
+def test_table_get_query_params(
+    app_with_tables, params, expected_len, expected_table_name
+):
+    res = table.get_tables(QueryParams(**params))
+    assert len(res["tables"]) == expected_len
+    assert res["tables"][0]["table_name"] == expected_table_name
 
 
 @pytest.mark.parametrize(
@@ -71,13 +70,10 @@ def test_table_all_query_params(app_factory, params, expected_len, expected_tabl
                 "primary_key": "id",
             },
         ),
-        ({}, None),
     ],
 )
 def test_create(app: Flask, req_dict: dict, res_dict: dict):
-    with app.app_context():
-        table = Table(req_dict)
-        assert table.create() == res_dict
+    assert table.create_table(TableCreateRequest(**req_dict)) == res_dict
 
 
 @pytest.mark.parametrize(
@@ -91,7 +87,6 @@ def test_create(app: Flask, req_dict: dict, res_dict: dict):
             },
             True,
         ),
-        (None, {}, False),
     ],
 )
 def test_update(app: Flask, table_name: str, req_dict: dict, res: bool):
@@ -102,159 +97,11 @@ def test_update(app: Flask, table_name: str, req_dict: dict, res: bool):
             {"name": "col2", "data_type": "text"},
         ],
     }
-    with app.app_context():
-        Table(bar_table_dict).create()
-        table = Table(req_dict, table_name=table_name, is_update_request=True)
+    table.create_table(TableCreateRequest(**bar_table_dict))
 
-        assert table.update() == res
-
-
-@pytest.mark.parametrize(
-    "req_dict, expected_errors",
-    [
-        ({"table_name": "a", "columns": [{"name": "b", "data_type": "boolean"}]}, ()),
-        (
-            {"columns": [{"name": "b", "data_type": "boolean"}]},
-            (
-                {
-                    "loc": ("table_name",),
-                    "msg": "field required",
-                    "type": "value_error.missing",
-                },
-            ),
-        ),
-        (
-            {"table_name": "a"},
-            (
-                {
-                    "loc": ("columns",),
-                    "msg": "field required",
-                    "type": "value_error.missing",
-                },
-            ),
-        ),
-        (
-            {"table_name": "a", "columns": []},
-            (
-                {
-                    "loc": ("columns",),
-                    "msg": "ensure this value has at least 1 items",
-                    "type": "value_error.list.min_items",
-                    "ctx": {"limit_value": 1},
-                },
-            ),
-        ),
-        (
-            {"table_name": "a", "columns": [{"data_type": "boolean"}]},
-            (
-                {
-                    "loc": ("columns", 0, "name"),
-                    "msg": "field required",
-                    "type": "value_error.missing",
-                },
-            ),
-        ),
-        (
-            {"table_name": "a", "columns": [{"name": "b"}]},
-            (
-                {
-                    "loc": ("columns", 0, "data_type"),
-                    "msg": "field required",
-                    "type": "value_error.missing",
-                },
-            ),
-        ),
-        (
-            {},
-            (
-                {
-                    "loc": ("table_name",),
-                    "msg": "field required",
-                    "type": "value_error.missing",
-                },
-                {
-                    "loc": ("columns",),
-                    "msg": "field required",
-                    "type": "value_error.missing",
-                },
-            ),
-        ),
-    ],
-)
-def test_validation_for_create(app: Flask, req_dict: dict, expected_errors: list[str]):
-    with app.app_context():
-        table = Table(req_dict, is_update_request=False)
-        assert table.errors == expected_errors
-
-
-@pytest.mark.parametrize(
-    "table_name, req_dict, expected_errors",
-    [
-        ("table0", {"action": "add", "remaining_sql": "c t"}, ()),
-        (
-            None,
-            {"action": "add", "remaining_sql": "c t"},
-            (
-                {
-                    "loc": ("table_name",),
-                    "msg": "none is not an allowed value",
-                    "type": "type_error.none.not_allowed",
-                },
-            ),
-        ),
-        (
-            "table0",
-            {"action": "add"},
-            (
-                (
-                    {
-                        "loc": ("remaining_sql",),
-                        "msg": "field required",
-                        "type": "value_error.missing",
-                    },
-                )
-            ),
-        ),
-        (
-            "table0",
-            {"remaining_sql": "c t"},
-            (
-                {
-                    "loc": ("action",),
-                    "msg": "field required",
-                    "type": "value_error.missing",
-                },
-            ),
-        ),
-        (
-            None,
-            {},
-            (
-                {
-                    "loc": ("table_name",),
-                    "msg": "none is not an allowed value",
-                    "type": "type_error.none.not_allowed",
-                },
-                {
-                    "loc": ("action",),
-                    "msg": "field required",
-                    "type": "value_error.missing",
-                },
-                {
-                    "loc": ("remaining_sql",),
-                    "msg": "field required",
-                    "type": "value_error.missing",
-                },
-            ),
-        ),
-    ],
-)
-def test_validation_for_update(
-    app: Flask, table_name: str | None, req_dict: dict, expected_errors: list[str]
-):
-    with app.app_context():
-        table = Table(req_dict, table_name=table_name, is_update_request=True)
-        assert table.errors == expected_errors
+    assert (
+        table.update_table(TableUpdateRequest(**req_dict, table_name=table_name)) == res
+    )
 
 
 @pytest.mark.parametrize(
@@ -275,11 +122,11 @@ def test_drop_sql_injection(app_factory, injection_attempt: str):
     )
 
     with app.app_context():
-        assert Table.find("table-00") is not None
+        assert table.find_table("table-00") is not None
 
         try:
-            Table.drop(injection_attempt)
+            table.drop_table(injection_attempt)
         except UndefinedTable:
             pass
 
-        assert Table.find("table-00") is not None
+        assert table.find_table("table-00") is not None

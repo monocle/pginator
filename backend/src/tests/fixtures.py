@@ -12,6 +12,25 @@ AppFactory = Callable[[Arg(str, "sql")], Flask]
 ClientFactory = Callable[[Arg(str, "sql")], FlaskClient]
 
 
+def users_sql():
+    table_name = "users"
+    num_rows = 21
+    values = ", ".join(
+        [f"('first_name{i}', 'last_name{i}')" for i in range(0, num_rows)]
+    )
+    return f"""
+        CREATE TABLE {table_name} (id serial PRIMARY KEY, first_name text, last_name text);
+        INSERT INTO {table_name} (first_name, last_name)
+            VALUES {values}
+        """
+
+
+def tables_sql():
+    return " ".join(
+        [f'CREATE TABLE "table-{str(i).zfill(2)}" (value text);' for i in range(0, 11)]
+    )
+
+
 @pytest.fixture
 def app_factory(request: pytest.FixtureRequest) -> AppFactory:
     def factory(sql: str | None = None) -> Flask:
@@ -50,19 +69,6 @@ def client_factory(
     return factory
 
 
-def users_sql():
-    table_name = "users"
-    num_rows = 21
-    values = ", ".join(
-        [f"('first_name{i}', 'last_name{i}')" for i in range(0, num_rows)]
-    )
-    return f"""
-        CREATE TABLE {table_name} (id serial PRIMARY KEY, first_name text, last_name text);
-        INSERT INTO {table_name} (first_name, last_name)
-            VALUES {values}
-        """
-
-
 @pytest.fixture
 def app_with_users(app_factory: AppFactory) -> Iterator:
     app = app_factory(users_sql())
@@ -73,3 +79,15 @@ def app_with_users(app_factory: AppFactory) -> Iterator:
 @pytest.fixture
 def client_with_users(client_factory) -> FlaskClient:
     return client_factory(users_sql())
+
+
+@pytest.fixture
+def app_with_tables(app_factory: AppFactory) -> Iterator:
+    app = app_factory(tables_sql())
+    with app.app_context():
+        yield
+
+
+@pytest.fixture
+def client_with_tables(client_factory) -> FlaskClient:
+    return client_factory(tables_sql())

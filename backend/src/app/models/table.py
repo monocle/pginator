@@ -1,19 +1,9 @@
-from typing import TYPE_CHECKING
+from typing import TypedDict
 
 from app.db import DB
 from psycopg.rows import DictRow
 from psycopg.sql import SQL, Identifier
-from pydantic import (
-    BaseModel,
-    Field,
-    NonNegativeInt,
-    PositiveInt,
-    ValidationError,
-    conlist,
-)
-
-if TYPE_CHECKING:
-    from pydantic.error_wrappers import ErrorDict
+from pydantic import BaseModel, Field, NonNegativeInt, PositiveInt, conlist
 
 
 def fetch_sql() -> SQL:
@@ -74,88 +64,58 @@ class QueryParams(BaseModel):
     offset: NonNegativeInt = Field(default=0)
 
 
-class Table:
-    @staticmethod
-    def all(query: dict | None = None) -> list[DictRow]:
-        params = QueryParams(**(query or {}))
-        return DB().fetch_all(fetch_sql(), {"name": "", **params.dict()})
+class GetReturnData(TypedDict):
+    tables: list[DictRow]
+    limit: int
+    offset: int
 
-    @staticmethod
-    def find(table_name: str) -> DictRow | None:
-        params = QueryParams()
-        return DB().fetch_one(fetch_sql(), {"name": table_name, **params.dict()})
 
-    @staticmethod
-    def drop(table_name: str) -> None:
-        DB().execute(SQL("DROP TABLE {}").format(Identifier(table_name)))
+def get_tables(query_params: QueryParams) -> GetReturnData:
+    res = DB().fetch_all(fetch_sql(), {"name": "", **query_params.dict()})
+    return {
+        "tables": res,
+        "limit": query_params.limit,
+        "offset": query_params.offset,
+    }
 
-    def __init__(
-        self,
-        request_dict: dict | None,
-        table_name: str | None = None,
-        is_update_request=False,
-    ) -> None:
-        self.table_name = table_name
-        self.request_dict = request_dict or {}
-        self._is_update_request = is_update_request
-        self._errors: list["ErrorDict"] = []
 
-        self.validate()
+def find_table(table_name: str) -> DictRow | None:
+    params = QueryParams()
+    return DB().fetch_one(fetch_sql(), {"name": table_name, **params.dict()})
 
-    def validate(self):
-        try:
-            if self._is_update_request:
-                self.request = TableUpdateRequest(
-                    table_name=self.table_name, **self.request_dict  # type: ignore
-                )
-            else:
-                self.request = TableCreateRequest(**self.request_dict)
-        except ValidationError as e:
-            self._errors = e.errors()
 
-    def create(self) -> DictRow | None:
-        if self.valid and isinstance(self.request, TableCreateRequest):
-            id_sql = SQL("id serial PRIMARY KEY")
-            columns_sql = SQL(", ").join(
-                SQL("{} {}").format(Identifier(col["name"]), SQL(col["data_type"]))
-                for col in self.request_dict["columns"]
-            )
+def create_table(request: TableCreateRequest) -> DictRow | None:
+    if isinstance(request, TableUpdateRequest):
+        raise ValueError("Use TableCreateRequest, not TableUpdateRequest")
 
-            if self.request.create_id:
-                columns_sql = SQL(", ").join([id_sql, columns_sql])
+    id_sql = SQL("id serial PRIMARY KEY")
+    columns_sql = SQL(", ").join(
+        SQL("{} {}").format(Identifier(col.name), SQL(col.data_type))
+        for col in request.columns
+    )
 
-            sql = SQL("CREATE TABLE {} ({})").format(
-                Identifier(self.request.table_name),
-                columns_sql,
-            )
+    if request.create_id:
+        columns_sql = SQL(", ").join([id_sql, columns_sql])
 
-            DB().execute(sql)
-            return Table.find(self.request.table_name)
+    sql = SQL("CREATE TABLE {} ({})").format(
+        Identifier(request.table_name),
+        columns_sql,
+    )
 
-        return None
+    DB().execute(sql)
+    return find_table(request.table_name)
 
-    def update(self) -> bool:
-        if self.valid and isinstance(self.request, TableUpdateRequest):
-            table_name = self.request.table_name
-            action = self.request_dict["action"]
-            remaining_sql = self.request_dict["remaining_sql"]
-            base_sql_str = "ALTER TABLE {name} {action} {remaining_sql}"
 
-            sql = SQL(base_sql_str).format(
-                name=Identifier(table_name),
-                action=SQL(action),
-                remaining_sql=SQL(remaining_sql),
-            )
+def update_table(request: TableUpdateRequest) -> bool:
+    sql = SQL("ALTER TABLE {} {} {}").format(
+        Identifier(request.table_name),
+        SQL(request.action),  # type: ignore
+        SQL(request.remaining_sql),  # type: ignore
+    )
 
-            DB().execute(sql)
-            return True
+    DB().execute(sql)
+    return True
 
-        return False
 
-    @property
-    def valid(self) -> bool:
-        return len(self._errors) == 0
-
-    @property
-    def errors(self) -> tuple["ErrorDict", ...]:
-        return tuple(self._errors)
+def drop_table(table_name: str) -> None:
+    DB().execute(SQL("DROP TABLE {}").format(Identifier(table_name)))
